@@ -8,12 +8,13 @@ library(rgdal)
 
 
 # Define your area of interest (aoi), which is MFC2 (bacino_MFC_corrected) or bounding_box_MFC or else #
-aoi <- readOGR("C:/Users/sanaz/Documents/MB12-project/data/vector/Site1_MFC2_agroforestry/MFC2.shp")
-set_aoi(aoi)
+aoi <- rgdal::readOGR("C:/Users/sanaz/Documents/MB12-project/data/vector/Site1_MFC2_agroforestry/MFC2.shp")
+#aoi <- sf::st_read(dsn = "C:/Users/sanaz/Documents/MB12-project/data/vector/Site1_MFC2_agroforestry/MFC2.shp" , layer = "MFC2")
+set_aoi(aoi)# Site:MFC2 
 view_aoi()
 
 # Define an archive directory:
-set_archive("C:/Users/sanaz/Documents/MB12-project/data/raster/")
+set_archive("C:/Users/sanaz/Documents/MB12-project/data/raster/sentinel2/")
 
 
 # There are three services to login at:
@@ -29,7 +30,7 @@ records <- get_records(time_range = c("2016-01-01", "2020-10-30"),#"starting dat
 
 View(records)
 
-#### Filter to have only Level-2A data that is already preprocessed in terms of atmospheric and geometric correction ######
+# Filter to have only Level-2A data that is already preprocessed in terms of atmospheric and geometric correction ######
 records_filt_L2a <- records[records$level == "Level-2A",]
 
 # display the footprint geometries of each record on a map:
@@ -50,51 +51,48 @@ new_record_table <- records_filt_L2a %>%
 write.table( new_record_table, file="C:/Users/sanaz/Documents/MB12-project/data/List_Sentinel-2.txt"
             ,col.names=TRUE,row.names=FALSE)
 
-# change the column name "preview_url" to "preview_file" to check if view_previews() work
-test_df <- records_filt_L2a
-test_df <- dplyr::rename( test_df , preview_file = preview_url)
 
 # preview (Here you can preview and select data based on quicklooks. Make sure that you select using T for TRUE or F for False) ######
 dir_out_preview <- "C:/Users/sanaz/Documents/MB12-project/data/raster/previews"
 select <- NULL
-#nrow(records_filt_L2a)
+
+#create an empty data frame 
+records_filt_new <- data.frame(matrix(ncol = 41, nrow = 5))
+x <- colnames(records_filt_L2a)
+x[39] <- "preview_file_jpg" # set the name of 39th column
+x[40] <- "preview_file"     # set the name of 40th column
+colnames(records_filt_new) <- x
+
 
 for(i in 1:5){
-  
-  get_previews( records_filt_L2a[i,] , dir_out = dir_out_preview , force =TRUE)
-  #view_previews(records_filt_L2a[i,] , show_aoi = TRUE)
-  #plot_previews(records_filt_L2a[i,])
-  #select <- c(select, as.logical(readline("Select? ")))
+  #records_filt_new[i,] <- get_previews( records_filt_L2a[i,] , dir_out = dir_out_preview)
+  plot <- plot_previews(records_filt_new[i,] , show_aoi = TRUE , aoi_colour = "red")
+  print(plot) # so that after each iteration, the new plot can be depicted
+  #usable <- as.logical(readline("Select? "))
+  #print(usable)
+  select <- c(select, as.logical(readline("Select? ")))# F: FALSE, T: TRUE
 }
 
-records.filt2 <- records_filt_L2a[select,]
-records.filt2<- records.filt2[-1,]
+records.filt2 <- records_filt_new[select,]
+#records.filt2<- records.filt2[-1,]
+
+# get data (Data will be downloaded to your directory set above, you will see the progress of data download) ######
+records.filt2[41] <- NA
+check_availability(records.filt2 ,  hub="auto" ,verbose=TRUE)
+x[41] <- "download_available"
+colnames(records.filt2) <- x
+
+order_data()
+files <- getSentinel_data(records.filt2, verbose=TRUE)
+
+###### extract data (first set again your working directory, a folder [extract_data] will be created and downloaded .zip files will extracted; modify the path to your 'unzip'exe accordingly) ######
+setwd("D:/DATA/Sentinel/ITALY/getSpatialData")
+extr_dir <- "D:/DATA/Sentinel/ITALY/getSpatialData/extract_data"
+if(!dir.exists(extr_dir)) dir.create(extr_dir)
+path7zip <- "C:/Program Files/7-Zip/7z.exe"
+catch <- pbsapply(files, function(x) system(paste0('"', path7zip, '" x ', x, " -o", extr_dir, " -aos"), invisible = T, show.output.on.console = F))
+safe.dir <- list.dirs(extr_dir, full.names = T, recursive = F) 
 
 
 
-# Download and georeference the previews for all records:
-records <- get_previews(records) 
-
-# Display the previews interactively (all or just a selection):
-view_previews(records[5,])
-
-# Use the previews to calculate the cloud coverage in your AOI for all records:
-records <- calc_cloudcov(records)
-
-
-# With the result, getSpatiaData can automatically select the most usable records,
-# For a series of timestamps:
-#records <- select_timeseries(records,184)
-
-
-# Once, you came to a selection (manually or automatically), check for availability:
-records <- check_availability(records)
-
-# Data sets that are not instantly available for download, e.g. because the have been
-# archived, can be ordered:
-records <- order_data(records)
-
-
-# Finally, download records available for download:
-records <- get_data(records)
 
