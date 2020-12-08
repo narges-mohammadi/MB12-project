@@ -1,0 +1,152 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+    <TITLE>Setting up the GDAL Prerequisite</TITLE>
+    <LINK REL="stylesheet" HREF="include/common.css" TYPE="text/css" />
+    <LINK REL="stylesheet" HREF="include/custom.css" TYPE="text/css" />
+  </HEAD>
+  <body>
+    <!-- BEGIN USGS Header Template -->
+    <div id="usgscolorband"><div id="usgsbanner">
+		<div id="usgsidentifier"><a href="http://www.usgs.gov/">
+			<img src="images/header_graphic_usgsIdentifier_white.jpg" alt="USGS - science for a changing world" title="U.S. Geological Survey Home Page" width="178" height="72" />
+		</a></div>
+		<div id="usgsccsabox"><div id="usgsccsa">
+			<br /><a href="http://www.usgs.gov/">USGS Home</a>
+			<br /><a href="http://www.usgs.gov/ask/">Contact USGS</a>
+			<br /><a href="http://search.usgs.gov/">Search USGS</a>
+			<br />
+		</div></div>
+    </div></div>
+    <!-- END USGS Header Template -->
+	
+    <div id="usgstitle"><p><i>Setting up the GDAL Prerequisite</i></p></div>
+    <div class="MainBody">
+
+		<ul>
+			<li><a href="#ONE">Installing with the GDAL Installer</a></li>
+			<li><a href="#TWO">Using an Existing GDAL Installation</a></li>
+			<li><a href="#THREE">Special Case: Installing GDAL without Admin privileges (Not Recommended)</a></li>
+		</ul>
+		<table class="Directions_Table">
+			<thead>
+				<tr class="Directions_Header">
+					<td colspan=3><a id="ONE">Installing with the GDAL Installer</a></td>
+				</tr>
+				<tr class="Directions_Header">
+					<td>Step</td><td>Description</td><td>Screenshot</td>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td rowspan=2 class="Directions_Step"><b>1</b></td><td nowrap="nowrap" class="Directions_Step_Title">Download GDAL Binaries</td><td rowspan=2 class="Directions_Screenshot"><img src="images/GDAL_Download.png" height="200" width="422" /></td>
+				</tr>
+				<tr>
+					<td class="Directions_Text">The main GDAL site download page (<a href="http://trac.osgeo.org/gdal/wiki/DownloadingGdalBinaries">http://trac.osgeo.org/gdal/wiki/DownloadingGdalBinaries</a>) has a number of variants for precompiled binaries on windows.  Any will work, but these directions presume that the version called "MSVC2010 (Win64) -release" available from the <a href="http://www.gisinternals.com/">http://www.gisinternals.com/</a> site is the one used (bottom of the second list - latest release).  The gdal-[version]<b>-core</b>.msi installer will put GDAL binaries at "C:\Program Files\GDAL\" by default.  <br /><br />Currently, the downloads at gisinternals use an older version of GDAL (1.10.1 at the time of writing this), newer versions can be compiled or obtained using other downloads.  The <a href="http://trac.osgeo.org/osgeo4w/">OSGeo for Windows</a> (Open Source Compass for Windows or OSGeo4W) and <a href="http://fwtools.maptools.org/">FWTools</a> (Open Source GIS Binary Kit) have precompiled versions of GDAL included that will work with these scripts if the directory containing gdal_translate.exe is added to the path.  (See <a href="#TWO">Using an Existing GDAL Installation</a>.)</td>
+				</tr>
+				<tr>
+					<td rowspan=2 class="Directions_Step"><b>2</b></td><td nowrap="nowrap" class="Directions_Step_Title">Run the MSI installer downloaded</td><td rowspan=2 class="Directions_Screenshot"><img src="images/GDAL_Installer.png" height="200" width="256" /></td>
+				</tr>
+				<tr>
+					<td class="Directions_Text">Run the installer with all default options and choosing either a typical install or a complete install.</td>
+				</tr>
+				<tr>
+					<td rowspan=2 class="Directions_Step"><b>3</b></td><td nowrap="nowrap" class="Directions_Step_Title">Add GDAL to the PATH Environment Variable</td><td rowspan=2 class="Directions_Screenshot"><img src="images/PATH_Environment.png" height="200" width="253" /></td>
+				</tr>
+				<tr>
+					<td class="Directions_Text">If not using the x64 installer mentioned in step 1 - or if you chose to install GDAL in a location other than "C:\Program Files\GDAL\", then the batch files will not find gdal_translate.exe unless the GDAL path is added to PATH environment variable.  <br /><br />This is part of the System Control panel's Advanced Settings.  You can right-click on "Computer" in windows explorer and choose "properties" as a shortcut to getting to the System Control panel.  Once there, select "Advanced System Settings".  This should prompt you for administrative access. Once that is open, press the "environment variables" button and then find the "Path" one and add the path to GDAL to that. </td>
+				</tr>
+			</tbody>
+		</table>
+		<br /><br />
+
+		<table class="Directions_Table">
+			<thead>
+				<tr class="Directions_Header">
+					<td colspan=3><a id="TWO">Using an Existing GDAL Installation</a></td>
+				</tr>
+				<tr class="Directions_Header">
+					<td>Step</td><td>Description</td><td>Screenshot</td>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td rowspan=2 class="Directions_Step"><b>1</b></td><td nowrap="nowrap" class="Directions_Step_Title">Find the path to gdal_translate.exe</td><td rowspan=2 class="Directions_Screenshot"><img src="images/GDAL_Search.png" height="200" width="283" /></td>
+				</tr>
+				<tr>
+					<td class="Directions_Text">If GDAL is already present on your system due to other software installations, you will need to find the location of the gdal_translate.exe.  The simplest way is to use the windows explorer file search and look for "gdal_translate.exe".  In the results, right-click and select "Open File Location".  This should open a new window to the path that is needed.</td>
+				</tr>
+				<tr>
+					<td rowspan=2 class="Directions_Step"><b>2</b></td><td nowrap="nowrap" class="Directions_Step_Title">Add the Path to gdal_translate.exe to the PATH Environment Variable</td><td rowspan=2 class="Directions_Screenshot"><img src="images/PATH_Environment.png" height="200" width="253" /></td>
+				</tr>
+				<tr>
+					<td class="Directions_Text">Once you have found the path to the gdal_translate.exe, then it needs to be added to the PATH environment variable.  This is part of the System Control panel's Advanced Settings.  You can right-click on "Computer" in windows explorer and choose "properties" as a shortcut to getting to the System Control panel.  Once there, select "Advanced System Settings".  This should prompt you for administrative access. Once that is open, press the "environment variables" button and then find the "Path" one and add the path to GDAL to that. </td>
+				</tr>
+			</tbody>
+		</table>
+		<br /><br />
+
+		<table class="Directions_Table">
+			<thead>
+				<tr class="Directions_Header">
+					<td colspan=3><a id="THREE">Special Case: Installing GDAL without Admin privileges (Not Recommended)</a></td>
+				</tr>
+				<tr class="Directions_Header">
+					<td>Step</td><td>Description</td><td>Screenshot</td>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td class="Directions_Text" colspan=3><b>NOTE: This set of instructions takes a precompiled version of GDAL and copies conversion scripts to the same folder.  In order for it to work properly, the scripts must be run from the same folder.  That is why this method is not recommended.</td>
+				</tr>
+				<tr>
+					<td rowspan=2 class="Directions_Step"><b>1</b></td><td nowrap="nowrap" class="Directions_Step_Title">Download pre-compiled GDAL that is not in an MSI installer.</td><td rowspan=2 class="Directions_Screenshot"><img src="images/GDAL_Download.png" height="200" width="422" /></td>
+				</tr>
+				<tr>
+					<td class="Directions_Text">The same gisinternals.com site (<a href="http://www.gisinternals.com/">http://www.gisinternals.com</a>) includes downloads that bundle mapserver and GDAL.  Download one of the compiled binaries zip files that include mapserver.</td>
+				</tr>
+				<tr>
+					<td rowspan=2 class="Directions_Step"><b>2</b></td><td nowrap="nowrap" class="Directions_Step_Title">Extract the GDAL binaries</td><td rowspan=2 class="Directions_Screenshot"><img src="images/GDAL_Unzip.png" height="200" width="424" /></td>
+				</tr>
+				<tr>
+					<td class="Directions_Text">Unzip the downloaded GDAL package.</td>
+				</tr>
+				<tr>
+					<td rowspan=2 class="Directions_Step"><b>3</b></td><td nowrap="nowrap" class="Directions_Step_Title">Find GDAL binaries</td><td rowspan=2 class="Directions_Screenshot"><img src="images/GDAL_Search.png" height="200" width="283" /></td>
+				</tr>
+				<tr>
+					<td class="Directions_Text">If you used the mapserver bundle from gisinternals.com, then the GDAL binaries will be under the bin\gdal\apps folder.  If you have a different bundle, then you will need to search for gdal_translate.exe and find the path to the folder where it exists. You can use the windows explorer file search and look for "gdal_translate.exe".  In the results, right-click and select "Open File Location".  This should open a new window to the path that is needed.<br /><br />The gdal_translate does need some libraries and data files available in order to work.  You can run gdal_translate and it will present an error message about missing DLL files.  Search for these files and copy them to the same folder as gdal_translate or add the folder location of the DLL's to the PATH.  Similarly, find the gdal-data folder and copy those files to the same folder as gdal_translate, or add the folder to the PATH.</td>
+				</tr>
+				<tr>
+					<td rowspan=2 class="Directions_Step"><b>4</b></td><td nowrap="nowrap" class="Directions_Step_Title">Copy Conversion script to GDAL folder</td><td rowspan=2 class="Directions_Screenshot"><img src="images/Script_Copy.png" height="200" width="492" /></td>
+				</tr>
+				<tr>
+					<td class="Directions_Text">Copy all the batch files and the Python files from the in the USGS_Raster_Conversion_Scripts (from all sub-folders too) to the directory found in step 3 above.  The scripts need to be in the same folder as gdal_translate.exe, and not in sub-folders.</td>
+				</tr>
+			</tbody>
+		</table>
+		<br /><br />
+		
+    </div>
+	
+    <!-- BEGIN USGS Footer Template -->
+    <div id="usgsfooter">
+		<p id="usgsfooterbar">
+			<a href="http://www.usgs.gov/laws/accessibility.html" title="Accessibility Policy (Section 508)">Accessibility</a>
+			<a href="http://www.usgs.gov/foia/" title="Freedom of Information Act">FOIA</a>
+			<a href="http://www.usgs.gov/laws/privacy.html" title="Privacy policies of the U.S. Geological Survey.">Privacy</a>
+			<a href="http://www.usgs.gov/laws/policies_notices.html" title="Policies and notices that govern information posted on USGS Web sites.">Policies and Notices</a>
+		</p>
+		<p id="usgsfootertext">
+		<a href="http://www.takepride.gov/"><img src="images/footer_graphic_takePride.jpg" alt="Take Pride in America logo" title="Take Pride in America Home Page" width="60" height="58" /></a>
+		<a href="http://usa.gov/"><img src="http://www.usgs.gov/images/footer_graphic_usagov.jpg" alt="USA.gov logo" title="USAGov: Government Made Easy" width="90" height="26" /></a>
+		<a href="http://www.doi.gov/">U.S. Department of the Interior</a> |
+		<a href="http://www.usgs.gov/">U.S. Geological Survey</a><br />
+		Page Contact Information: <a href="mailto:webmapping@usgs.gov">webmapping@usgs.gov</a><br />
+		Page Last Modified: September 2015</p>
+    </div>
+    <!-- END USGS Footer Template -->
+  </body>
+</html>
+

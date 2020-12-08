@@ -1,0 +1,124 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+    <TITLE>Information about the Raster Conversion Scripts</TITLE>
+    <LINK REL="stylesheet" HREF="include/common.css" TYPE="text/css" />
+    <LINK REL="stylesheet" HREF="include/custom.css" TYPE="text/css" />
+  </HEAD>
+  <body>
+    <!-- BEGIN USGS Header Template -->
+    <div id="usgscolorband"><div id="usgsbanner">
+		<div id="usgsidentifier"><a href="http://www.usgs.gov/">
+			<img src="images/header_graphic_usgsIdentifier_white.jpg" alt="USGS - science for a changing world" title="U.S. Geological Survey Home Page" width="178" height="72" />
+		</a></div>
+		<div id="usgsccsabox"><div id="usgsccsa">
+			<br /><a href="http://www.usgs.gov/">USGS Home</a>
+			<br /><a href="http://www.usgs.gov/ask/">Contact USGS</a>
+			<br /><a href="http://search.usgs.gov/">Search USGS</a>
+			<br />
+		</div></div>
+    </div></div>
+    <!-- END USGS Header Template -->
+	
+    <div id="usgstitle"><p><i>Information about the Raster Conversion Scripts</i></p></div>
+    <div class="MainBody">
+
+		<br />
+		<p class="Directions_Step_Title">Introduction:</p>
+			<div class="Intro">USGS provides batch file conversion scripts (<a href="http://gisdata.usgs.gov/website/USGS_Raster_Conversion_Scripts.zip">http://gisdata.usgs.gov/website/USGS_Raster_Conversion_Scripts.zip</a>) to make it easier to convert <i>The National Map</i> raster staged products from current downloadable formats into other common formats. These scripts require either Geospatial Data Abstraction Library (GDAL) or Esri ArcGIS software for raster data file conversions. The documentation is in HTML and is under the 'How_To' folder. It includes procedures for getting GDAL from <a href="http://www.gisinternals.com">http://www.gisinternals.com</a> and Esri based scripts that should work with ArcGIS 10.x.</div><br />
+		<p class="Directions_Step_Title">Prerequisites:</p>
+		<ul>
+			<li>ESRI ArcGIS 10, 10.1, 10.2, or 10.3 - The Python code needs to be able to import arcpy in order to function appropriately.  The call to Python is in C:\Python26\ArcGIS10.0 or C:\Python27\ArcGIS10.[1,2, or 3] or in the PATH environment variable.</li>
+			<br />OR<br /><br />
+			<li>The gdal_translate.exe is in the PATH environment variable, or is in C:\Program Files\GDAL\.  Steps to install GDAL are demonstrated <a href="GDAL_Translate.html">here</a>.</li>
+		</ul>
+		
+		<br />
+		<p class="Directions_Step_Title">Conversion Script Walk-throughs:</p>
+		<div style="padding-left:10px;padding-right:10px;">
+			<div class="Directions_Step_Title">ESRI ArcGIS Based Script Directions</div>
+			<ul>
+				<li><a href="Convert_ArcGrid_Data_2_GeoTIFF_with_ESRI.html">Convert ArcGrid Data to GeoTIFF</a> (3DEP 1 and 1/3 Arc-second)</li>
+				<li><a href="Convert_GeoTIFF_Data_2_BIL_with_ESRI.html">Convert GeoTIFF Data to BIL</a> (NLCD)</li>
+				<li><a href="Convert_GeoTIFF_Data_2_IMG_with_ESRI.html">Convert GeoTIFF Data to IMG</a> (NLCD, HRO)</li>
+				<li><a href="Convert_IMG_Data_2_BIL_with_ESRI.html">Convert IMG Data to BIL</a> (3DEP 1/9th)</li>
+				<li><a href="Convert_JP2_Data_2_GeoTIFF_with_ESRI.html">Convert JP2 Data to GeoTIFF</a> (NAIP, HRO)</li>
+				<li><a href="Convert_JP2_Data_2_IMG_with_ESRI.html">Convert JP2 Data to IMG</a> (NAIP, HRO)</li>
+			</ul>
+		</div>
+		<div style="padding-left:10px;padding-right:10px;">
+			<div class="Directions_Step_Title">GDAL Based Script Directions</div>
+			<ul>
+				<li><a href="Convert_ArcGrid_Data_2_GeoTIFF_with_GDAL.html">Convert ArcGrid Data to GeoTIFF</a> (3DEP 1 and 1/3 Arc-second)</li>
+				<li><a href="Convert_GeoTIFF_Data_2_BIL_with_GDAL.html">Convert GeoTIFF Data to BIL</a> (NLCD)</li>
+				<li><a href="Convert_GeoTIFF_Data_2_IMG_with_GDAL.html">Convert GeoTIFF Data to IMG</a> (NLCD, HRO)</li>
+				<li><a href="Convert_IMG_Data_2_BIL_with_GDAL.html">Convert IMG Data to BIL</a> (3DEP 1/9th)</li>
+				<li><a href="Convert_JP2_Data_2_GeoTIFF_with_GDAL.html">Convert JP2 Data to GeoTIFF</a> (NAIP, HRO)</li>
+				<li><a href="Convert_JP2_Data_2_IMG_with_GDAL.html">Convert JP2 Data to IMG</a> (NAIP, HRO)</li>
+			</ul>
+		</div>
+		<div style="padding:10px;padding-right:10px;">
+			<div class="Directions_Step_Title">Python and GDAL PATHS used in the scripts</div>
+			<div style="padding:10px;">
+				The batch files provided here attempt to use the GDAL or ArcGIS installed Python utilities in order to perform the conversion.  They will attempt to find the correct version of gdal_translate.exe or python.exe in default install locations.  If the scripts are unable to find the correct utility, it will try to call the utility without any file path.  This only works if the path to the correct gdal_translate.exe or python.exe has been added to the PATH environment variable.  If the utlities are not in the default location, and you are unable to change the PATH environment variable (IE: changing environment variables requires privileged access or administrator level account), then you must edit the batch files to correct the path to gdal_translate.exe and/or python.exe.
+				<br /><br />
+				The version of python used in the default locations is the 32-bit version.  ArcGIS 10.2 and newer include both a 32-bit and a 64-bit version of python.  To use this, you must edit the batch files to change the python call to using the python.exe in the ArcGISx6410.2 or ArcGISx6410.3 sub-folder of the python install.  If you just put the python.exe in the PATH environment variable, the scripts will still find the 32-bit install and use that.
+			</div>
+		</div>
+		
+		<br />
+		<p class="Directions_Step_Title">Reference Links:</p>
+		<ul>
+			<li>ESRI ArcGIS Information:
+				<blockquote>
+					ArcGIS: <a href="http://www.esri.com/software/arcgis">http://www.esri.com/software/arcgis</a><br />
+					ArcPy: <a href="http://resources.arcgis.com/en/help/main/10.1/index.html#/What_is_ArcPy/000v000000v7000000/">http://resources.arcgis.com/en/help/main/10.1/index.html#/What_is_ArcPy/000v000000v7000000/</a><br />
+					CopyRaster_management: <a href="http://resources.arcgis.com/en/help/main/10.1/index.html#//001700000094000000">http://resources.arcgis.com/en/help/main/10.1/index.html#//001700000094000000</a>
+				</blockquote>
+			</li>
+			<li>GDAL Information:
+				<blockquote>
+					Downloads: <a href="http://trac.osgeo.org/gdal/wiki/DownloadingGdalBinaries">http://trac.osgeo.org/gdal/wiki/DownloadingGdalBinaries</a><br />
+					GDAL Translate: <a href="http://www.gdal.org/gdal_translate.html">http://www.gdal.org/gdal_translate.html</a>
+				</blockquote>
+			</li>
+			<li>Batch File Information: 
+				<blockquote>
+					Microsoft Batch File Documentation: <a href="http://www.microsoft.com/resources/documentation/windows/xp/all/proddocs/en-us/batch.mspx?mfr=true">http://www.microsoft.com/resources/documentation/windows/xp/all/proddocs/en-us/batch.mspx?mfr=true</a><br />
+					Computer Hope Information on Batch Files: <a href="http://www.computerhope.com/batch.htm">http://www.computerhope.com/batch.htm</a><br />
+					Rob van der Woude's Scripting Pages Batch Files Page: <a href="http://www.robvanderwoude.com/batchfiles.php">http://www.robvanderwoude.com/batchfiles.php</a>
+				</blockquote>
+			</li>
+		</ul>
+
+		<br />
+		<p class="Directions_Step_Title">License</p>
+		<ul>
+			<li><a href="license.html">License Information for these scripts</a></li>
+		</ul>
+		<br /><br />
+
+
+    </div>
+	
+    <!-- BEGIN USGS Footer Template -->
+    <div id="usgsfooter">
+		<p id="usgsfooterbar">
+			<a href="http://www.usgs.gov/laws/accessibility.html" title="Accessibility Policy (Section 508)">Accessibility</a>
+			<a href="http://www.usgs.gov/foia/" title="Freedom of Information Act">FOIA</a>
+			<a href="http://www.usgs.gov/laws/privacy.html" title="Privacy policies of the U.S. Geological Survey.">Privacy</a>
+			<a href="http://www.usgs.gov/laws/policies_notices.html" title="Policies and notices that govern information posted on USGS Web sites.">Policies and Notices</a>
+		</p>
+		<p id="usgsfootertext">
+		<a href="http://www.takepride.gov/"><img src="images/footer_graphic_takePride.jpg" alt="Take Pride in America logo" title="Take Pride in America Home Page" width="60" height="58" /></a>
+		<a href="http://usa.gov/"><img src="http://www.usgs.gov/images/footer_graphic_usagov.jpg" alt="USA.gov logo" title="USAGov: Government Made Easy" width="90" height="26" /></a>
+		<a href="http://www.doi.gov/">U.S. Department of the Interior</a> |
+		<a href="http://www.usgs.gov/">U.S. Geological Survey</a><br />
+		Page Contact Information: <a href="mailto:webmapping@usgs.gov">webmapping@usgs.gov</a><br />
+		Page Last Modified: September 2015</p>
+    </div>
+    <!-- END USGS Footer Template -->
+  </body>
+</html>
+
