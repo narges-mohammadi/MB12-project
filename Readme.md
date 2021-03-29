@@ -17,7 +17,7 @@ Characteristics of sites:
 * GOR1: The groundwater level is about 40 to 50 meters below the soil surface and is set on bedrock made up of turbidite sandstones with medium permeability, and mantled 
     by a regolith zone characterized by sand-silt mixtures.
 
-(source)[https://www.researchgate.net/publication/336830026_Integrating_ground-based_and_remote_sensing-based_monitoring_of_near-surface_soil_moisture_in_a_Mediterranean_environment?enrichId=rgreq-9bd52def02ebd432c5175c926ce98599-XXX&enrichSource=Y292ZXJQYWdlOzMzNjgzMDAyNjtBUzo4MTgyNTk3MTI1NDQ3NjhAMTU3MjA5OTcyNjA1NQ%3D%3D&el=1_x_2&_esc=publicationCoverPdf]
+[source](https://www.researchgate.net/publication/336830026_Integrating_ground-based_and_remote_sensing-based_monitoring_of_near-surface_soil_moisture_in_a_Mediterranean_environment?enrichId=rgreq-9bd52def02ebd432c5175c926ce98599-XXX&enrichSource=Y292ZXJQYWdlOzMzNjgzMDAyNjtBUzo4MTgyNTk3MTI1NDQ3NjhAMTU3MjA5OTcyNjA1NQ%3D%3D&el=1_x_2&_esc=publicationCoverPdf)
 
 
 ## Analysis
