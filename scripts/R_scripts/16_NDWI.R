@@ -46,7 +46,7 @@ write_NDWI_site_year <- function(site, year){
     # Load S2 tiles 
     year_dir <- paste0("L2A_",year)
     S2_names <- here("Documents","MB12-project","CREODIAS_part",
-                     "data_from_CREODIAS", year_dir)
+                     "data_from_CREODIAS", "L2A_2017_sen2cor")#year_dir
     
     S2_names_1 <- list.files(S2_names, recursive = FALSE, full.names = TRUE, 
                              pattern="*.SAFE$")#S2[A,B]_MSIL2A_[[:alnum:]]{15}_[[:alnum:]]{5}_[[:alnum:]]{4}_[[:alnum:]]{6}_[[:alnum:]]{15}.SAFE$
@@ -167,8 +167,8 @@ write_NDWI_site_year <- function(site, year){
 }
 
 # Change site and year here
-site <- "MFC2" # "GOR"
-year <- 2020
+site <- "GOR" #"MFC2"
+year <- 2017
 write_NDWI_site_year(site, year)
 
 
@@ -206,10 +206,8 @@ NDWI_dfs_site_year <- function(site, year){
     
     #Load the select_10m.Rds
     # the following "select_10m" is different for each site
-    select_10m <-readRDS(file = file.path(here("Desktop", "Playground_dir_8", "select_10m"),
+    select_10m <-readRDS(file = file.path(here("Desktop", "Playground_dir_10", site, year),
                                           paste0("select10m_", year,"_", toupper(site),".Rds")))
-    
-  
     # select tiles based on select_10m
     ndwi_list_df <- as.data.frame(ndwi_list)
     select_10m_df <- as.data.frame(select_10m)

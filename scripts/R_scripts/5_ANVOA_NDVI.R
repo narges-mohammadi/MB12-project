@@ -2,66 +2,115 @@
 # In this piece of code, ANalysis Of Variance(ANOVA) using aov()
 # on NDVI and LAI is performed.
 ##########################
+
 setwd("C:/Users/sanaz/")
 
 #1: Load R packages
 ## Install & load packages
-pck <- (c("tidyr","rgdal","ggplot2","raster","leaflet","rasterVis","gridExtra","RColorBrewer","plotly","RStoolbox","sp","IRdisplay","reshape","here","readr", "lubridate","dplyr"))
+pck <- (c("tidyr","rgdal","ggplot2","raster","leaflet","rasterVis","gridExtra",
+          "RColorBrewer","plotly","RStoolbox","sp","IRdisplay","reshape",
+          "here","readr", "lubridate","dplyr"))
 new_pck <- pck[!pck %in% installed.packages()[,"Package"]]
 if(length(new_pck)){install.packages(new_pck)}
 sapply(pck , require, character.only=TRUE)
 
 setwd("C:/Users/sanaz/Desktop/Playground_dir_3/NDVI_cropped")
 
-ndvi_dataframe <- function(year, study_site) {
-  site <- toupper(study_site)
+
+
+ndvi_dataframe <- function(year, site) {
+  site <- toupper(site)
   base_dir <- here("Desktop","Playground_dir_3","NDVI_cropped")
-  ndvi_dir <- here("Desktop","Playground_dir_3","NDVI_cropped",site,year)
-  ndvi_list <- list.files(ndvi_dir,recursive = TRUE, full.names = TRUE, pattern="^NDVI_")
+  ndvi_dir <- here("Desktop","Playground_dir_3","NDVI_cropped",
+                   site,
+                   year)
+  ndvi_list <- list.files(ndvi_dir,recursive = TRUE, 
+                          full.names = TRUE, pattern="^NDVI_")
   
-  filenames <- list.files(path = base_dir, pattern = "*.Rds$", full.names = TRUE)
+  # Situation when select_10m files are different for each site
+ 
   
-  if (year == 2017){
-    select_10m <-readRDS(file = filenames[1])
-  }
-  else if (year == 2018){
-    select_10m <-readRDS(file = filenames[2])  
-  }
-  else if(year == 2019){
-    select_10m <-readRDS(file = filenames[3])
-  }
-  else if(year == 2020){
-    select_10m <-readRDS(file = filenames[4])
-  }
+  select_10m <-readRDS(file = here("Desktop","Playground_dir_3","NDVI_cropped",
+                                   "select_10m",
+                                   paste0("select10m_",year,"_",
+                                          toupper(site),".Rds")))
+ 
+
   
   # select tiles based on select_10m
   ndvi_list_df <- as.data.frame(ndvi_list)
   select_10m_df <- as.data.frame(select_10m)
   ndvi_list_selected <- cbind(ndvi_list_df , select_10m_df)
-  ndvi_list_selected<- ndvi_list_selected %>% filter(select_10m == TRUE)
+  ndvi_list_selected <- ndvi_list_selected %>% filter(select_10m == TRUE)
+  
   ndvi_stack <- stack(ndvi_list_selected$ndvi_list)
+  
   # Create a dataframe from ndvi_stack
   ndvi_stack_df <- as.data.frame(ndvi_stack, xy = TRUE) %>%
     melt(id.vars = c('x','y'))
   
-  # Extract the acquisition date and add it to df as "date" column
-  new_df_with_date <- ndvi_stack_df %>% 
-    rowwise() %>% 
-    mutate(date = as.Date(parse_date_time(strsplit(strsplit(as.character(variable), "_")[[1]][5],"T")[[1]][1],orders = "ymd" )))
   
-  # Add "year" $ "month" columns to df 
-  new_df_with_date$year <- year(new_df_with_date$date)
-  new_df_with_date$month <- month(new_df_with_date$date)
+  if (site == "MFC2"){
+    
+    sntnlDates <- gsub("NDVI_mfc2_S2[AB]_MSIL2A_|_N[[:digit:]]{4}_R[[:digit:]]{3}_T33TWE_[[:alnum:]]{15}", 
+                       "", 
+                       ndvi_stack_df$variable)
+    
+  }else{
+    
+    sntnlDates <- gsub("NDVI_gor_S2[AB]_MSIL2A_|_N[[:digit:]]{4}_R[[:digit:]]{3}_T33TWE_[[:alnum:]]{15}", 
+                       "", 
+                       ndvi_stack_df$variable)
+  }
+  
+  # Convert character dates in dataframe to date 
+  ndvi_stack_df$date <- as.data.frame(sntnlDates)
+  
+  ndvi_stack_df$char_date <- apply(ndvi_stack_df, 1, 
+                                  FUN=function(x){strsplit(x["date"],"T")[[1]][1]})
+  
+  # Add "year" $ "month" columns to df
+  ndvi_stack_df$Year <- apply(ndvi_stack_df, 1, 
+                              FUN=function(x){substring(x["char_date"], first = 1, last=4)})
+
+  
+  ndvi_stack_df$Month <- apply(ndvi_stack_df, 1, 
+                              FUN=function(x){substring(x["char_date"], first = 5, last=6)})
+  
+  
+  new_df_with_date <- ndvi_stack_df
+
+  # Extract the acquisition date and add it to df as "date" column
+  # new_df_with_date <- ndvi_stack_df %>% 
+  #                     rowwise() %>% 
+  #                     mutate(date_n = as.Date(parse_date_time(
+  #                                                           strsplit(
+  #                                                                 strsplit(as.character(variable), 
+  #                                                                         "_")[[1]][5],"T")[[1]][1],
+  #                                                                                 orders = "ymd" )))
+  # 
+ 
+  
   
   # Meteorological Seasons
-  new_df_with_date <- new_df_with_date %>%
-    mutate(
-      season = case_when(
-        month %in%  9:11 ~ "Fall",
-        month %in%  c(12, 1, 2)  ~ "Winter",
-        month %in%  3:5  ~ "Spring",
-        TRUE ~ "Summer"))
+  # new_df_with_date <- new_df_with_date %>%
+  #   mutate(
+  #     season = case_when(
+  #       month %in%  9:11 ~ "Fall",
+  #       month %in%  c(12, 1, 2)  ~ "Winter",
+  #       month %in%  3:5  ~ "Spring",
+  #       TRUE ~ "Summer"))
   
+  # Seasons based on Paolo's paper for this area
+  new_df_with_date <- new_df_with_date %>%
+      mutate(
+        season = case_when(
+          Month %in%  c("11","12","01","02") ~ "Wet",
+          Month %in%  c("05","06","07","08")  ~ "Dry",
+          Month %in%  c("03","04","09","10")  ~ "Transition"
+          )
+      )
+
   # Add the "site" column to the dataframe
   new_df_with_date$Site <- site
   
@@ -69,41 +118,57 @@ ndvi_dataframe <- function(year, study_site) {
 }
 
 # Call the previously defined function to create the NDVI_df for ANOVA 
-ndvi_2017_mfc2 <- ndvi_dataframe(2017,"mfc2")
-ndvi_2018_mfc2 <- ndvi_dataframe(2018,"mfc2")
-ndvi_2019_mfc2 <- ndvi_dataframe(2019,"mfc2")
-ndvi_2020_mfc2 <- ndvi_dataframe(2020,"mfc2")
+#ndvi_2017_mfc2 <- ndvi_dataframe(2017,"mfc2")
+#ndvi_2018_mfc2 <- ndvi_dataframe(2018,"mfc2")
+#ndvi_2019_mfc2 <- ndvi_dataframe(2019,"mfc2")
+#ndvi_2020_mfc2 <- ndvi_dataframe(2020,"mfc2")
 
-ndvi_2017_gor <- ndvi_dataframe(2017,"gor")
-ndvi_2018_gor <- ndvi_dataframe(2018,"gor")
-ndvi_2019_gor <- ndvi_dataframe(2019,"gor")
-ndvi_2020_gor <- ndvi_dataframe(2020,"gor")
+
 
 
 # Combine yearly ndvi dataframes into one 
-ndvi_df_combi_mfc2 <- rbind(ndvi_2017_mfc2, ndvi_2018_mfc2, ndvi_2019_mfc2, ndvi_2020_mfc2)
-ndvi_df_combi_gor <- rbind(ndvi_2017_gor, ndvi_2018_gor, ndvi_2019_gor, ndvi_2020_gor)
+site_1 <- "gor"
+#ndvi_2017_gor1 <- ndvi_dataframe(2017,site_1)
+#ndvi_2018_gor1 <- ndvi_dataframe(2018,site_1)
+#ndvi_2019_gor1 <- ndvi_dataframe(2019,"gor")
+#ndvi_2020_gor1 <- ndvi_dataframe(2020,"gor")
+
+ndvi_df_combi_gor1 <- rbind(#ndvi_dataframe(2017,site_1), 
+                            ndvi_dataframe(2018,site_1), 
+                            ndvi_dataframe(2019,site_1), 
+                            ndvi_dataframe(2020,site_1))
+site_2 <- "MFC2"
+ndvi_df_combi_mfc2 <- rbind(#ndvi_dataframe(2017,site_2), 
+                           ndvi_dataframe(2018,site_2), 
+                           ndvi_dataframe(2019,site_2), 
+                           ndvi_dataframe(2020,site_2))
+
+
 
 # Combine dfs of two study sites
-ndvi_df_combi <- rbind(ndvi_df_combi_mfc2, ndvi_df_combi_gor)
 
+ndvi_df_combi <- dplyr::bind_rows(ndvi_df_combi_mfc2,
+                                  ndvi_df_combi_gor1)
 
 # Before performing the ANOVA, visulize the data
-plot(value~year, data=ndvi_df_combi_gor)#ndvi_df_combi_mfc2
-boxplot(value~year , data = ndvi_df_combi_mfc2)
+x11()
+plot(value~Year, data=ndvi_df_combi_gor1) #ndvi_df_combi_mfc2
+boxplot(value~Year , data = ndvi_df_combi_mfc2)
 
 # I reorder the groups order : I change the order of the factor ndvi_df_combi$season
-ndvi_df_combi$season <- factor(ndvi_df_combi$season , levels=c( "Spring", "Summer", "Fall", "Winter"))
-boxplot(value~season, data = ndvi_df_combi)# seasonal on one year and one site
+ndvi_df_combi$season <- factor(ndvi_df_combi$season,
+                               levels=c( "Dry", "Wet", "Transition"))
+boxplot(value~season, 
+        data = ndvi_df_combi)# seasonal on one year and one site
 
 
 # Before ANOVA, compute descriptive statistics 
-ndvi_df_combi_gor %>%
-  group_by(year) %>% 
+ndvi_df_combi_gor1 %>%
+  group_by(Year) %>% 
   summarise(mean = mean(value))
 
 ndvi_df_combi_mfc2 %>%
-  group_by(year) %>%
+  group_by(Year) %>%
   summarise(median = median(value))
 
 ndvi_df_combi%>%
@@ -112,8 +177,15 @@ ndvi_df_combi%>%
 
 
 
+#quantile-quantile plot 
+x11()
+ggplot(ndvi_df_combi, aes(sample = value)) +
+  stat_qq() +
+  stat_qq_line()
+
+
 # ANOVA yearly(2017,2018,2019,2020)
-res_aov <- aov(value~year, data = ndvi_df_combi_gor)
+res_aov <- aov(value~Year, data = ndvi_df_combi_gor1)
 
 summary(res_aov)
 

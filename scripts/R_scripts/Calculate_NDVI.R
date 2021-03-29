@@ -29,15 +29,81 @@ m <- leaflet(sizingPolicy = leafletSizingPolicy(defaultHeight = 200 , viewer.sup
 
 m
 
-#3 : Load Sentinel2 data
-S2 <- "C://Users//sanaz//Documents//MB12-project//CREODIAS_part//data_from_CREODIAS//testdir/"
-S2 <- list.files(S2,recursive = TRUE, full.names = TRUE, pattern="B0[2348]_10m.jp2$")
-S2 <- lapply(1:length(S2), function(x){raster(S2[x])})
+
+# Load S2 tiles for tile selection based on 10m RGB
+S2_names_2 <- "C://Users//sanaz//Documents//MB12-project//CREODIAS_part//data_from_CREODIAS//testdir/"
+S2_names_2 <- list.files(S2_names_2,recursive = TRUE, full.names = TRUE, pattern="^T[[:alnum:]]{5}_[[:alnum:]]{15}_B0[2348]_10m.jp2$")#T33TWE_20191229T095319_B03_10m
+S2_names_2 <- lapply(1:length(S2_names_2), function(x){raster(S2_names_2[x])})
+
+# Stack the .jp2 bands(10m)
+S2_stack_v2 <- stack(S2_names_2)
+
+# crop around the study areas
+b <- as(extent(515379.3,519889,4461970.6,4468567.9), 'SpatialPolygons')
+crs(b) <- crs(S2_stack)
+S2_stack_v2_crop_bbox <- crop(S2_stack_v2 , b)
+
+
+# To choose which tiles to use for analysis based on cloud cover(use of 10m resolution) 
+select_10m <- list()
+
+for(i in 1:length(S2_stack_v2)){
+  plotRGB(S2_stack_v2[[i]] , r=1, g=2 ,b=3 ,scale=maxValue(S2_stack_v2[[2]]), stretch='hist')
+  plot(aoi , add= TRUE , border= 'red' , lwd= 1)
+  plot(aoi_2 , add= TRUE , border= 'red' , lwd= 1)
+  select_10m <- c(select_10m, as.logical(readline("Select? ")))# F: FALSE, T: TRUE
+}
+
 
 # Load preview of tiles
 S2_pvi <- "C://Users//sanaz//Documents//MB12-project//CREODIAS_part//data_from_CREODIAS//testdir/"
 S2_pvi <- list.files(S2_pvi,recursive = TRUE, full.names = TRUE, pattern="^T[[:alnum:]]{5}_[[:alnum:]]{15}_PVI.jp2$")
 S2_pvi <- lapply(1:length(S2_pvi), function(x){stack(S2_pvi[x])})# used stack() bc the preview has 3 bands(rgb)
+
+
+# To choose which tiles to use for analysis based on cloud cover over study areas(previews)
+select <- list()
+for(i in 1:length(S2_pvi)){
+  plotRGB(S2_pvi[[i]] , r=1, g=2 ,b=3 ,scale=maxValue(S2_pvi[[2]]), stretch='hist')
+  plot(aoi , add= TRUE , border= 'red' , lwd= 1)
+  plot(aoi_2 , add= TRUE , border= 'red' , lwd= 1)
+  select <- c(select, as.logical(readline("Select? ")))# F: FALSE, T: TRUE
+}
+
+
+#save the "select" on the drive("select" based on previews)
+saveRDS(select, file = "C:/Users/sanaz/Documents/MB12-project/CREODIAS_part/data_from_CREODIAS/testdir/select_testdir.Rds")
+
+
+#Load the select.Rds ("select" based on previews)
+select <- readRDS(file = "C:/Users/sanaz/Documents/MB12-project/CREODIAS_part/data_from_CREODIAS/testdir/select_testdir.Rds") 
+
+
+# Retrieve the names of the SAFE folders
+S2_names <- "C://Users//sanaz//Documents//MB12-project//CREODIAS_part//data_from_CREODIAS//testdir/"
+S2_names <- list.files(S2_names,recursive = TRUE, full.names = TRUE, pattern=".SAFE$" ,include.dirs = TRUE)
+S2_names_df <- data.frame(S2_names)
+
+
+# S2_names_df & use "select" on it to choose the appropriate tiles
+
+## Convert list into dataframe columns 
+select_df <- data.frame(unlist(select)) 
+
+## Names of columns of dataframe 
+names(select_df) <- "SAFE_names"
+
+S2_names_df_filt <- S2_names_df[select_df$SAFE_names,]
+
+#3 : Load Sentinel2 data
+S2_selected <- list.files(S2_names_df_filt,recursive = TRUE, full.names = TRUE, pattern="^T[[:alnum:]]{5}_[[:alnum:]]{15}_B0[2348]_10m.jp2$")#T33TWE_20191229T095319_B03_10m
+S2_selected <- lapply(1:length(S2_selected), function(x){raster(S2_selected[x])})
+
+
+#3 : Load Sentinel2 data
+#S2 <- "C://Users//sanaz//Documents//MB12-project//CREODIAS_part//data_from_CREODIAS//testdir/"
+#S2 <- list.files(S2,recursive = TRUE, full.names = TRUE, pattern="B0[2348]_10m.jp2$")
+#S2 <- lapply(1:length(S2), function(x){raster(S2[x])})
 
 
 # Set layout
@@ -46,7 +112,7 @@ m <- rbind(c(1,2))
 layout(m)
 
 # Stack the .jp2 bands(10m)
-S2_stack <- stack(S2)
+S2_stack <- stack(S2_selected)
 
 # Stack the previews(to choose which tiles to use for analysis(w/o cloud and cloud shadow for study areas))
 S2_pvi_stack <- stack(S2_pvi)
@@ -84,31 +150,12 @@ plotRGB(S2_pvi[[10]] , r=1, g=2 ,b=3 ,scale=maxValue(S2_pvi[[6]]), stretch='hist
 plot(aoi , add= TRUE , border= 'red' , lwd= 1)
 plot(aoi_2 , add= TRUE , border= 'red' , lwd= 1)
 
-# To choose which tiles to use for analysis based on cloud cover over study areas 
-select <- list()
-for(i in 1:length(S2_pvi)){
-  plotRGB(S2_pvi[[i]] , r=1, g=2 ,b=3 ,scale=maxValue(S2_pvi[[2]]), stretch='hist')
-  plot(aoi , add= TRUE , border= 'red' , lwd= 1)
-  plot(aoi_2 , add= TRUE , border= 'red' , lwd= 1)
-  select <- c(select, as.logical(readline("Select? ")))# F: FALSE, T: TRUE
-}
-
-#save the "select" on the drive
-saveRDS(select, file = "C:/Users/sanaz/Documents/MB12-project/CREODIAS_part/data_from_CREODIAS/testdir/select_testdir.Rds")
-#Load the select.Rds 
-select <- readRDS(file = "C:/Users/sanaz/Documents/MB12-project/CREODIAS_part/data_from_CREODIAS/testdir/select_testdir.Rds") 
-
-# S2_stack to a dataframe and use "select" on it to choose the appropriate tiles
-
-records.filt2 <- records_filt_new[select2,]
-
-
 
 
 # Derive NDVI 
 NDVI <- list()
 # To make sure, result of division is integer(necessary for indexing the list & stack)
-n <- as.integer(length(S2)/4)
+n <- as.integer(length(S2_selected)/4)#
 for(i in 1:n){
   NDVI[[i]] <- overlay(x=S2_stack_crop_bbox[[((i-1)*4+3)]], y=S2_stack_crop_bbox[[((i-1)*4+4)]], fun=function(x,y){(y-x)/(y+x)})
   names(NDVI[[i]]) <- paste0("NDVI_", strsplit(strsplit(names(S2_stack_crop_bbox[[(i-1)*4+4]]), "_")[[1]][2], "T")[[1]][1])

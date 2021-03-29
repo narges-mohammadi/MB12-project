@@ -20,10 +20,10 @@ sapply(pck , require, character.only=TRUE)
 #here("MB12-project","CREODIAS_part","data_from_CREODIAS","L2A_2018")
 
 # Load Sentinel2 safe directories
-S2_names_safe <- here("Documents","MB12-project","CREODIAS_part","data_from_CREODIAS","L2A_2020")#"C:/Users/sanaz/Documents/MB12-project/CREODIAS_part/data_from_CREODIAS/L2A_2017"#
+S2_names_safe <- here("Documents","MB12-project","CREODIAS_part","data_from_CREODIAS","L2A_2017_sen2cor")#"C:/Users/sanaz/Documents/MB12-project/CREODIAS_part/data_from_CREODIAS/L2A_2017"#
 
 S2_names_1 <- list.files(S2_names_safe, recursive = FALSE, full.names = TRUE, 
-                         pattern="*.SAFE$")#S2[A,B]_MSIL2A_[[:alnum:]]{15}_[[:alnum:]]{5}_[[:alnum:]]{4}_[[:alnum:]]{6}_[[:alnum:]]{15}
+                         pattern="*.SAFE$")#for 2019 & 2020: "*.SAFE$"
 
 ### B2, B3, B4, B8(NDVI) ############################# 
 # B2, B3, B4, B8: (10m resolution)
@@ -68,7 +68,7 @@ if(length(S2_safe_dir_B11_L2A)){S2_gtiff_B11_L2A <- pbapply::pblapply(1:length(S
                        path_name <- file.path(base_dir, name); gdal_translate(S2_safe_dir_B11_L2A[x], path_name);
                        unlink(S2_safe_dir_B11_L2A[x], recursive=TRUE, force = TRUE)})}
 
-# B8a
+# B8A
 S2_safe_dir_B8a_T <- list.files(S2_names_1, recursive = TRUE, full.names = TRUE, 
                                 pattern="^[T][[:alnum:]]{5}_[[:alnum:]]{15}_B8A_20m.jp2$")#^[T][[:alnum:]]{5}_[[:alnum:]]{15}_
 S2_safe_dir_B8a_L2A <- list.files(S2_names_1, recursive = TRUE, full.names = TRUE, 

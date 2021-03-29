@@ -29,24 +29,28 @@ GOR_bbox <- as(extent(519177.4, 519889, 4461970.6, 4462834), 'SpatialPolygons')
 crs(GOR_bbox) <- crs("+proj=utm +zone=33 +datum=WGS84 +units=m +no_defs")
 
 # change site and year here
-site <- "GOR"   #   "MFC2"
-year <- 2020
+site <- "MFC2"# "GOR"   # 
+year <- 2017
 
 
 # Load S2 tiles (attention to ^ in pattern)
-year_dir <- paste0("L2A_",year)
-S2_names <- here("Documents","MB12-project","CREODIAS_part",
-                 "data_from_CREODIAS",year_dir) 
+year_dir <- paste0("L2A_", year)
+S2_names <- here("Documents", "MB12-project", "CREODIAS_part",
+                 "data_from_CREODIAS", "L2A_2017_sen2cor") #year_dir
 S2_names_1 <- list.files(S2_names,recursive = FALSE, 
                          full.names = TRUE, 
                          pattern="S2[A,B]_MSIL2A_[[:alnum:]]{15}_[[:alnum:]]{5}_[[:alnum:]]{4}_[[:alnum:]]{6}_[[:alnum:]]{15}.SAFE$")#S2[A,B]
+
 S2_names_T <- list.files(S2_names_1, recursive = TRUE, full.names = TRUE, 
                          pattern="^[T][[:alnum:]]{5}_[[:alnum:]]{15}_B0[234]_10m.tif$")
+
 S2_names_L2A_v1 <- list.files(S2_names_1, recursive = TRUE, full.names = TRUE,
                               pattern="L2A_T[[:alnum:]]{5}_[[:alnum:]]{15}_B0[234]_10m.tif$")
 S2_names <- lapply(1:length(S2_names_T), function(x){raster(S2_names_T[x])})                                                      
+
 if(length(S2_names_L2A_v1)){S2_names_L2A <- lapply(1:length(S2_names_L2A_v1), 
-                                                   function(x){raster(S2_names_L2A_v1[x])})}
+                                                   function(x){raster(S2_names_L2A_v1[x])})
+}else{S2_names_L2A <- character(0)}
 
 
 num_loop <- length(S2_names_T) / 3
@@ -91,7 +95,7 @@ for(i in 1:num_loop){
 
 
 
-num_loop_L2A <- length(S2_names_L2A) / 3
+if(length(S2_names_L2A)){num_loop_L2A <- length(S2_names_L2A) / 3}
 # This loop calculates RGB for tiles in which names of 10m bands start with "L2A"
 if(length(S2_names_L2A_v1)){for(i in 1:num_loop_L2A){
   # Stack all the .tiff bands(10m)

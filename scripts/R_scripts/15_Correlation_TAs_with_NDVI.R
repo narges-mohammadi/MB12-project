@@ -3,10 +3,6 @@ setwd("C:/Users/sanaz/")
 
 #1: Load R packages
 ## Install & load packages
-#install.packages("devtools")
-#library(devtools)
-#install_local(here("Documents", "R", "ENMTools-master"))
-#library(ENMTools)
 pck <- (c("tidyr","rgdal","ggplot2","raster","leaflet",
           "rasterVis","gridExtra","RColorBrewer","plotly",
           "RStoolbox","sp","IRdisplay","reshape","here", 
@@ -18,10 +14,10 @@ sapply(pck , require, character.only=TRUE)
 
 #2: Load Auxillary data
 ### Define your area of interest (aoi), which is MFC2 (bacino_MFC_corrected) or bounding_box_MFC or else #
-aoi <- rgdal::readOGR(dsn=here("Documents", "MB12-project", "data", "vector", "Site1_MFC2_agroforestry"),layer= "MFC2")
+aoi <- rgdal::readOGR(dsn=here::here("Documents", "MB12-project", "data", "vector", "Site1_MFC2_agroforestry"), layer= "MFC2")
 aoi_2 <- rgdal::readOGR(dsn=here("Documents", "MB12-project", "data", "vector","Site2_GOR_forest", "Site2_GOR_forest"), layer="GOR")
-artifact_mfc2 <- rgdal::readOGR("C:/Users/sanaz/Documents/MB12-project/QGIS_part/parking_lot.shp")
-artifact2_mfc2 <- rgdal::readOGR("C:/Users/sanaz/Documents/MB12-project/QGIS_part/house.shp")
+artifact_mfc2 <- rgdal::readOGR(here("Documents", "MB12-project", "QGIS_part", "parking_lot.shp"))
+artifact2_mfc2 <- rgdal::readOGR(here("Documents", "MB12-project", "QGIS_part","house.shp"))
 
 # reproject data
 artifact_mfc2_new <- spTransform(artifact_mfc2,
@@ -41,7 +37,7 @@ dem <- raster(file.path(here("Documents", "MB12-project", "data",
                              "DEM_5m_Sarah"),"DEM5m_UARC.tif"))
 
 # crop around each study area and mask
-dem_mfc2 <- crop(dem , MFC2_bbox)
+dem_mfc2 <- crop(dem, MFC2_bbox)
 dem_mfc2_masked <- mask(dem_mfc2, aoi)
 
 dem_gor1 <- crop(dem , GOR_bbox)
@@ -293,7 +289,7 @@ gor1_NDVI_yrs_stack <- brick(gor1_NDVI_yrs_stack)
 
 
 
-# Create dataframe out of the NDVI stack with 3 seasons and TA stack for "GOR1"
+# Create Dataframe out of the NDVI stack with 3 seasons and TA stack for "GOR1"
 
 # Create a raster stack that has the mean NDVI for each pixel in each season
 means_gor_wet <- stack(means_gor[[1]], means_gor[[4]], means_gor[[7]], means_gor[[10]])
@@ -346,7 +342,7 @@ ndvi_gor_yearly_crop <- crop(clipped_gor_yearly, shared_extent)
 gor_ndvi_crop <- crop(clipped_gor, shared_extent)# one layer raster (NDVI average of all years for GOR1 pixel wise)
 
 
-# convert the raster stacks to dataframes
+# Convert the raster stacks to dataframes
 df_gor_three_season <- as.data.frame(means_gor_crop)
 df_gor_TA <- as.data.frame(TA_gor1_crop)
 df_gor_yearly_ndvi <- as.data.frame(ndvi_gor_yearly_crop)
@@ -388,7 +384,7 @@ matrix_gor_avg_yrs <- as.matrix(df_gor_avg_yrs)
 
 
 
-
+# Correlation matrix
 M_season <- cor(matrix_gor_with_season, use = "pairwise.complete.obs")
 M_year <- cor(matrix_gor_year_based, use = "pairwise.complete.obs")
 M_2017 <- cor(matrix_gor_2017, use = "pairwise.complete.obs")
@@ -396,7 +392,9 @@ M_2018 <- cor(matrix_gor_2018, use = "pairwise.complete.obs")
 M_2019 <- cor(matrix_gor_2019, use = "pairwise.complete.obs")
 M_2020 <- cor(matrix_gor_2020, use = "pairwise.complete.obs")
 list_M <- list(M_2017, M_2018, M_2019, M_2020)
-M_avg <- cor(matrix_gor_avg_yrs, use = "pairwise.complete.obs")
+M_avg <- cor(matrix_gor_avg_yrs, 
+             use = "pairwise.complete.obs",
+             method = "pearson")
 
 
 
@@ -405,6 +403,7 @@ ouput_dir <- here("Desktop","Playground_dir_14", "output")
 # save the matrix as text file
 write.table(matrix_gor_with_season, file=file.path(ouput_dir, 
                                                    "matrix_correlation_seasonal_NDVI_TA_GOR1.txt"))
+
 # save the corresponding corrplot() on drive            
 pdf(file = file.path(ouput_dir, "matrix_correlation_seasonal_NDVI_TA_GOR1.pdf"),
     width = 10,
