@@ -23,7 +23,7 @@ Characteristics of sites:
 ## Analysis
 
 Analysis chain recieves L2A Sentinel-2 tiles from 2017 to 2020. It starts by unzipping tiles, moves on to converting Jp2 bands to Gtiff, selecting tiles that have no cloud cover over two study areas,
-masking out man-made areas in MFC2 and calculating Vegetation Indexes (NDVI & NDWI). For NDVI B4 and B8 of S2 were used. NDWI[Normalized Difference Water Index](Gao) as a measure of liquid water in vegetation canopies was calculated using S2 B8a and B11.
+masking out man-made areas in MFC2 and calculating Vegetation Indexes (NDVI & NDWI). For NDVI B4 and B8 of S2 were used. NDWI(Normalized Difference Water Index)(Gao) as a measure of liquid water in vegetation canopies was calculated using B8a and B11 of S2 .
 
 Then calculating correlation coefficients (pearson) of VIs with meteorological parameters and Topographic Attributes for each study site.
 
