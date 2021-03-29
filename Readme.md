@@ -34,7 +34,7 @@ DEM and Topographic Attributes were provided by Dr. Sarah Schönbrodt-Stitt.
 
 ## Importance of analysis
 
-The calculated VIs is going to be used in the hydrological models as additional features and their contribution will be evaluated.
+The calculated VIs are going to be used in the hydrological models as additional features and their contribution will be evaluated.
 
 
 ## Discussion
