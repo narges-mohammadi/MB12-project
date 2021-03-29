@@ -10,10 +10,11 @@ The two experimental sites (MFC2 and GOR1) are located in the Upper Alento River
 
 ## Analysis
 
-Analysis chain recieves L2A Sentinel-2 tiles from 2017 to 2020. 
-It starts by unzipping tiles, then converting Jp2 bands to Gtiff, selecting tiles that have no cloud cover over two study areas, calculating Vegetation Indexes(NDVI & NDWI(Gao)).
+Analysis chain recieves L2A Sentinel-2 tiles from 2017 to 2020. It starts by unzipping tiles, moves on to converting Jp2 bands to Gtiff, selecting tiles that have no cloud cover over two study areas, calculating Vegetation Indexes(NDVI & NDWI(Gao)).
+
 Then calculating correlation coefficient (pearson) of VIs with meteorological parameters and Topographic Attributes for each study site.
-Meteorological parameters including Temperature, Precipitation, Evapotranspiration were provided by Paolo Nasta which can be found in the data folder.
+
+Meteorological measurements including Temperature, Precipitation, Evapotranspiration were provided by Paolo Nasta which can be found in the data folder.
 
 
 ## 
