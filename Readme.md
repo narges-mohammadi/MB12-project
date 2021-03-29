@@ -7,7 +7,7 @@ The two experimental sites (MFC2 and GOR1) are located in the Upper Alento River
      
 
 * GOR1 is representative of the woodland zone of UARC on the north-facing hillslope of UARC, located near the village of Gorga. 
-    At GOR1, the groundwater level is about 40 to 50 meters below the soil surface.
+    
 
 Characteristics of sites:
 
