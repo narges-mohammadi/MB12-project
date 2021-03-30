@@ -73,7 +73,7 @@ corr_ta_vi <- function(vi, site, vi_dir, dir_ta, out_dir) {
     # choose folder to read from based on VI
     if(vi == "NDVI"){
         
-        selected_vi_stack_path <- list.files(here(vi_dir, site, "Extracted_dfs"), 
+        selected_vi_stack_path <- list.files(here(vi_dir, "NDVI", site, "Extracted_dfs"), 
                                              recursive = FALSE, 
                                              full.names = TRUE, 
                                              pattern="selected_")
@@ -224,11 +224,18 @@ corr_ta_vi <- function(vi, site, vi_dir, dir_ta, out_dir) {
 
 
 #VI input directory
-vi_dir <- here("Desktop","Playground_dir_14")
+#vi_dir <- here("Desktop","Playground_dir_14")
+
+# For github repo:
+vi_dir <- "data"/"extracted_dfs"/
+
 
 #TA input dir
-dir_ta <- here("Documents", "MB12-project", "data",
-               "Gridded_topographic_attributes")
+#dir_ta <- here("Documents", "MB12-project", "data",
+#              "Gridded_topographic_attributes")
+
+# For github repo:
+dir_ta <- "data"/"Gridded_topographic_attributes"/
 
 # output dir
 out_dir <- here(vi_dir, "output")
