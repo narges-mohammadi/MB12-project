@@ -40,7 +40,7 @@ three_season <- function(x){
 # for now it only supports NDVI and NDWI
 
 
-corr_ta_vi <- function(vi, site) {
+corr_ta_vi <- function(vi, site, vi_dir, dir_ta, out_dir) {
     
     if(site == "GOR"){
         study_site <- aoi_2
@@ -51,10 +51,7 @@ corr_ta_vi <- function(vi, site) {
         shared_extent <- extent(515380, 516010, 4468070, 4468570)
     }
     
-    #TA
-    dir_ta <- here("Documents", "MB12-project", "data",
-         "Gridded_topographic_attributes")
-    
+  
     if(site == "GOR"){
         dir_ta_site <- here(dir_ta, "TA_GOR1_10m")  
     }else if(site == "MFC2"){
@@ -72,19 +69,17 @@ corr_ta_vi <- function(vi, site) {
                                                                      })
     }
     
-    #VI 
-    dir <- here("Desktop","Playground_dir_14")
     
     # choose folder to read from based on VI
     if(vi == "NDVI"){
         
-        selected_vi_stack_path <- list.files(here(dir, site, "Extracted_dfs"), 
+        selected_vi_stack_path <- list.files(here(vi_dir, site, "Extracted_dfs"), 
                                              recursive = FALSE, 
                                              full.names = TRUE, 
                                              pattern="selected_")
     }else if(vi == "NDWI"){
         
-        selected_vi_stack_path <- list.files(here(dir, "NDWI", site, "Extracted_dfs"), 
+        selected_vi_stack_path <- list.files(here(vi_dir, "NDWI", site, "Extracted_dfs"), 
                                              recursive = FALSE, 
                                              full.names = TRUE, 
                                              pattern="selected_")
@@ -119,14 +114,26 @@ corr_ta_vi <- function(vi, site) {
     names(mean_stack_annual[[3]]) <- mean_stack_annual_names[[3]]
     names(mean_stack_annual[[4]]) <- mean_stack_annual_names[[4]]
     
-    #!!!! problematic for ndwi: extent of 1th and 2nd raster layers is not the same as 3rd and 4th!!!!
-    #(Probably bc NDWI for 2019 and 2020 is done with 20m resolution and for 2017 and 2018 with 10 m resolution)
-    
+    #!!!! problematic for ndwi
     #Create one "RasterLayer" that averages VI values of all the years
     mean_vi <- calc(stack(mean_stack_annual[[1]], mean_stack_annual[[2]], 
                           mean_stack_annual[[3]], mean_stack_annual[[4]]),
                     fun = mean)
     
+    # For NDWI change the resolution from 20m to 10 m to be able to later combine with Topographic Attributes(10m)
+    if(vi == "NDWI"){
+        # disaggregate from 20x20 resolution to 10x10 (factor = 2)
+        
+        mean_stack_annual_resampled <- pbapply::pblapply(1:length(mean_stack_annual),
+                                               function(x){disaggregate(mean_stack_annual[[x]], fact = 2)
+                                                   })
+        mean_vi_resampled <- disaggregate(mean_vi, fact = 2)
+        
+        # Now to keep the rest of code unchanged, assign the new values to the previous names
+        mean_stack_annual <- mean_stack_annual_resampled
+        
+        mean_vi <- mean_vi_resampled
+    }
     
     # Mask out the raster values outside the study site boundary
     clipped_vi_annual <- pbapply::pblapply(1:length(mean_stack_annual),
@@ -145,6 +152,18 @@ corr_ta_vi <- function(vi, site) {
                       function(x){raster::crop(clipped_vi_annual[[x]], shared_extent)})
     
     vi_crop <- crop(clipped_vi, shared_extent)# one layer raster (VI average of all years pixel wise)
+    if(vi == "NDWI"){crs(vi_crop) <- "+proj=utm +zone=33 +datum=WGS84 +units=m +no_defs"}
+    
+    # To make the extents the same(following the problem that arised with NDWI(not having the same extent even after resampling))
+    # source : https://gis.stackexchange.com/questions/232095/using-the-same-mask-on-two-rasters-but-i-get-different-extents-in-r
+    if(vi == "NDWI"){
+        
+        ta_crop_project <- pbapply::pblapply(1:length(ta_crop),
+                                     function(x){projectRaster(ta_crop[[x]], vi_crop)})
+        
+        # to keep the rest of code unchanged
+        ta_crop <- ta_crop_project
+    }
     
     # Convert the raster stacks to Dataframes
     # List of dataframes 
@@ -193,16 +212,27 @@ corr_ta_vi <- function(vi, site) {
     # Write the matrixes to drive
     pbapply::pblapply(1:length(list_corr_matrix),
                       function(x){write.csv(list_corr_matrix[[x]], 
-                                            file = file.path(here(dir, "output"),
+                                            file = file.path(out_dir,
                                                              sprintf("Corr_Matrix_%s_%s_with_TAs_%s.csv", vi, year_list[x], site)))})
     
     # save the matrix as csv file
-    write.csv(M_avg, file = file.path(here(dir, "output"), 
+    write.csv(M_avg, file = file.path(out_dir, 
                                         sprintf("Corr_Matrix_%s_with_TAs_%s.csv", vi, site)))
     
    
 }
 
-corr_ta_vi(vi="NDVI", site="GOR")
+
+#VI input directory
+vi_dir <- here("Desktop","Playground_dir_14")
+
+#TA input dir
+dir_ta <- here("Documents", "MB12-project", "data",
+               "Gridded_topographic_attributes")
+
+# output dir
+out_dir <- here(vi_dir, "output")
+
+corr_ta_vi(vi="NDWI", site="GOR", vi_dir = vi_dir, dir_ta = dir_ta, out_dir = out_dir)
 
 
