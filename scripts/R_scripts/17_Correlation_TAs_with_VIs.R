@@ -259,12 +259,12 @@ corr_ta_vi(vi="NDWI", site="GOR", vi_dir = vi_dir, dir_ta = dir_ta, out_dir = ou
 
 cor_matrix_dir <- here(vi_dir, "output")
 
-# finds the full path of correlation matrixes containing the specified study site name
+# Finds the full path of correlation matrixes containing the specified study site name
 cor_matrix_names <- list.files(cor_matrix_dir,
                                pattern = sprintf("*%s*.csv", site),
                                full.names = TRUE)
 
-# created the correlation plots and writes them to pdf
+# Create the correlation plots and writes them as pdf
 if(length(cor_matrix_names)){cor_matrix <- pbapply::pblapply(1:length(cor_matrix_names), 
                                                         function(x){
                                                           # import the .csv matrixes into R(Be aware that read.csv() output is in dataframe class)
@@ -282,7 +282,7 @@ if(length(cor_matrix_names)){cor_matrix <- pbapply::pblapply(1:length(cor_matrix
                                                                           2,
                                                                           as.numeric)
                                                           
-                                                          # give the names of columns to rows
+                                                          # Give the names of columns to rows
                                                           rownames(my_mat) <- colnames(my_mat)[2:11]
                                                           
                                                           pdf(file = file.path(cor_matrix_dir, 
