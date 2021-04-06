@@ -10,43 +10,42 @@
 
 setwd("C:/Users/sanaz/")
 
-#1: Load R packages
-## Install & load packages
-pck <- (c("tidyr", "rgdal", "ggplot2", "raster",
-          "leaflet", "rasterVis","gridExtra", "RColorBrewer",
-          "plotly", "RStoolbox", "sp", "sf", "IRdisplay", "reshape", 
-          "here", "patchwork", "tidyverse", "cowplot"))
-new_pck <- pck[!pck %in% installed.packages()[, "Package"]]
-if(length(new_pck)){install.packages(new_pck)}
-sapply(pck, require, character.only=TRUE)
-
-
-#2: Load Auxillary data
-### Define your area of interest (aoi), which is MFC2 (bacino_MFC_corrected) or bounding_box_MFC or else #
-aoi <- rgdal::readOGR("C:/Users/sanaz/Documents/MB12-project/data/vector/Site1_MFC2_agroforestry/MFC2.shp")
-aoi_2 <- rgdal::readOGR("C:/Users/sanaz/Documents/MB12-project/data/vector/Site2_GOR_forest/Site2_GOR_forest/GOR.shp")
-artifact_mfc2 <- rgdal::readOGR("C:/Users/sanaz/Documents/MB12-project/QGIS_part/parking_lot.shp")
-artifact2_mfc2 <- rgdal::readOGR("C:/Users/sanaz/Documents/MB12-project/QGIS_part/house.shp")
-
-# reproject data
-artifact_mfc2_new <- spTransform(artifact_mfc2, crs(aoi))
-artifact2_mfc2_new <- spTransform(artifact2_mfc2, crs(aoi))
-
-MFC2_bbox <- as(extent(515379.3, 516012.9, 4468068.3, 4468567.9), 'SpatialPolygons')
-crs(MFC2_bbox) <- crs("+proj=utm +zone=33 +datum=WGS84 +units=m +no_defs")
-GOR_bbox <- as(extent(519177.4, 519889, 4461970.6, 4462834), 'SpatialPolygons')
-crs(GOR_bbox) <- crs("+proj=utm +zone=33 +datum=WGS84 +units=m +no_defs")
-
-
-ndwi_crop_dir <- here("Desktop", "Playground_dir_15")
 
 # This function calculates NDWI for the specific year and study area & writes them on the drive
-write_NDWI_site_year <- function(site, year){
+write_NDWI_site_year <- function(path, site, year, ndwi_crop_dir){
+    
+    #1: Load R packages
+    ## Install & load packages
+    pck <- (c("tidyr", "rgdal", "ggplot2", "raster",
+              "leaflet", "rasterVis","gridExtra", "RColorBrewer",
+              "plotly", "RStoolbox", "sp", "sf", "IRdisplay", "reshape", 
+              "here", "patchwork", "tidyverse", "cowplot"))
+    new_pck <- pck[!pck %in% installed.packages()[, "Package"]]
+    if(length(new_pck)){install.packages(new_pck)}
+    sapply(pck, require, character.only=TRUE)
+    
+    
+    #2: Load Auxillary data
+    ### Define your area of interest (aoi), which is MFC2 (bacino_MFC_corrected) or bounding_box_MFC or else #
+    aoi <- rgdal::readOGR("C:/Users/sanaz/Documents/MB12-project/data/vector/Site1_MFC2_agroforestry/MFC2.shp")
+    aoi_2 <- rgdal::readOGR("C:/Users/sanaz/Documents/MB12-project/data/vector/Site2_GOR_forest/Site2_GOR_forest/GOR.shp")
+    artifact_mfc2 <- rgdal::readOGR("C:/Users/sanaz/Documents/MB12-project/QGIS_part/parking_lot.shp")
+    artifact2_mfc2 <- rgdal::readOGR("C:/Users/sanaz/Documents/MB12-project/QGIS_part/house.shp")
+    
+    # reproject data
+    artifact_mfc2_new <- spTransform(artifact_mfc2, crs(aoi))
+    artifact2_mfc2_new <- spTransform(artifact2_mfc2, crs(aoi))
+    
+    MFC2_bbox <- as(extent(515379.3, 516012.9, 4468068.3, 4468567.9), 'SpatialPolygons')
+    crs(MFC2_bbox) <- crs("+proj=utm +zone=33 +datum=WGS84 +units=m +no_defs")
+    GOR_bbox <- as(extent(519177.4, 519889, 4461970.6, 4462834), 'SpatialPolygons')
+    crs(GOR_bbox) <- crs("+proj=utm +zone=33 +datum=WGS84 +units=m +no_defs")
+    
+    
     site <- toupper(site)
     # Load S2 tiles 
-    year_dir <- paste0("L2A_",year)
-    S2_names <- here("Documents","MB12-project","CREODIAS_part",
-                     "data_from_CREODIAS", "L2A_2017_sen2cor")#year_dir
+    #year_dir <- paste0("L2A_",year)
+    S2_names <- path
     
     S2_names_1 <- list.files(S2_names, recursive = FALSE, full.names = TRUE, 
                              pattern="*.SAFE$")#S2[A,B]_MSIL2A_[[:alnum:]]{15}_[[:alnum:]]{5}_[[:alnum:]]{4}_[[:alnum:]]{6}_[[:alnum:]]{15}.SAFE$
@@ -96,6 +95,22 @@ write_NDWI_site_year <- function(site, year){
         names(NDWI_site) <- paste0("NDWI_", tolower(site),"_",
                                    unlist(strsplit(strsplit(S2_names_B8a_T[i],'/')[[1]][9],'[.]')[[1]][1]))
 
+        # Remove the artifact(parking lot) from NDWI files for MFC2
+        if(site == "MFC2"){
+            
+            NDWI_site_wo_artifact  <-  NDWI_site
+            
+            r1 <- NDWI_site
+            r1[artifact_mfc2_new] <- 94
+            r1[artifact2_mfc2_new] <- 94
+            names(r1) <- names(NDWI_site)
+            rna <- reclassify(r1, cbind(94, NA))
+            NDWI_site_wo_artifact  <-  rna
+            
+            
+            NDWI_site <- NDWI_site_wo_artifact
+        }
+        
         # Export the NDWI raster
         name <- names(NDWI_site)
         if(!dir.exists(file.path(ndwi_crop_dir, site))){dir.create(file.path(ndwi_crop_dir, site))}
@@ -103,7 +118,9 @@ write_NDWI_site_year <- function(site, year){
         write_dir <- file.path(ndwi_crop_dir, site, as.character(year))
         filename <- file.path(write_dir, name)
 
-
+        # Define projection for NDWI before writing it to drive
+        crs(NDWI_site) <- sp::CRS('+proj=utm +zone=33 +datum=WGS84 +units=m +no_defs')
+        
         writeRaster(x = NDWI_site,
                     filename = filename,
                     format = "GTiff", # save as a tif
@@ -146,12 +163,31 @@ write_NDWI_site_year <- function(site, year){
             
             
             
+            # Remove the artifact(parking lot) from NDWI files for MFC2
+            if(site == "MFC2"){
+                
+                NDWI_site_wo_artifact  <-  NDWI_site
+                
+                r1 <- NDWI_site
+                r1[artifact_mfc2_new] <- 94
+                r1[artifact2_mfc2_new] <- 94
+                names(r1) <- names(NDWI_site)
+                rna <- reclassify(r1, cbind(94, NA))
+                NDWI_site_wo_artifact  <-  rna
+                
+                
+                NDWI_site <- NDWI_site_wo_artifact
+            }
+            
             name <- names(NDWI_site)
             ndwi_crop_dir <- here("Desktop","Playground_dir_15")
             if(!dir.exists(file.path(ndwi_crop_dir, site))){dir.create(file.path(ndwi_crop_dir, site))}
             if(!dir.exists(file.path(ndwi_crop_dir, site, as.character(year)))){dir.create(file.path(ndwi_crop_dir, site, as.character(year)))}
             write_dir <- file.path(ndwi_crop_dir,site,as.character(year))
             filename <- file.path(write_dir, name)
+            
+            # Define projection for NDWI before writing it to drive
+            crs(NDWI_site) <- sp::CRS('+proj=utm +zone=33 +datum=WGS84 +units=m +no_defs')
             
             writeRaster(x = NDWI_site,
                         filename = filename,
@@ -167,13 +203,24 @@ write_NDWI_site_year <- function(site, year){
 }
 
 # Change site and year here
-site <- "GOR" #"MFC2"
+site <- "MFC2"#"GOR" #
 year <- 2017
-write_NDWI_site_year(site, year)
+
+library(here)
+
+#input directory(where L2A SAFE folders are located)
+path <- here("Documents","MB12-project","CREODIAS_part",
+     "data_from_CREODIAS", "L2A_2017_sen2cor")#year_dir;L2A_2020
+
+# output directory
+ndwi_crop_dir <- here("Desktop", "Playground_dir_15")
+
+write_NDWI_site_year(path, site, year, ndwi_crop_dir)
 
 
 
 # Following function converts the character to DOY
+# This function must be loaded before calling the "NDWI_dfs_site_year" function
 # sample form of x is : "20200507T095029"
 char_to_doy <- function(x) {
     # Use of pipes
@@ -184,6 +231,7 @@ char_to_doy <- function(x) {
     
     return (DOY)
 }
+
 
 # use the following "ndwi_crop_dir" for 2017,2018,2019,2020
 if(!dir.exists(here("Desktop", "Playground_dir_8", "NDWI"))){
@@ -197,10 +245,39 @@ if(!dir.exists(here("Desktop", "Playground_dir_14", "NDWI"))){
 
 # This function saves NDWI dataframes to drive, also plots the NDWI time series 
 # and writes the dfs & plots to drive
-NDWI_dfs_site_year <- function(site, year){
+NDWI_dfs_site_year <- function(site, year, ndwi_crop_dir, save_dir, write_dir, save_dir_avg){
+    
+    #1: Load R packages
+    ## Install & load packages
+    pck <- (c("tidyr", "rgdal", "ggplot2", "raster",
+              "leaflet", "rasterVis","gridExtra", "RColorBrewer",
+              "plotly", "RStoolbox", "sp", "sf", "IRdisplay", "reshape", 
+              "here", "patchwork", "tidyverse", "cowplot"))
+    new_pck <- pck[!pck %in% installed.packages()[, "Package"]]
+    if(length(new_pck)){install.packages(new_pck)}
+    sapply(pck, require, character.only=TRUE)
+    
+    
+    #2: Load Auxillary data
+    ### Define your area of interest (aoi), which is MFC2 (bacino_MFC_corrected) or bounding_box_MFC or else #
+    aoi <- rgdal::readOGR("C:/Users/sanaz/Documents/MB12-project/data/vector/Site1_MFC2_agroforestry/MFC2.shp")
+    aoi_2 <- rgdal::readOGR("C:/Users/sanaz/Documents/MB12-project/data/vector/Site2_GOR_forest/Site2_GOR_forest/GOR.shp")
+    artifact_mfc2 <- rgdal::readOGR("C:/Users/sanaz/Documents/MB12-project/QGIS_part/parking_lot.shp")
+    artifact2_mfc2 <- rgdal::readOGR("C:/Users/sanaz/Documents/MB12-project/QGIS_part/house.shp")
+    
+    # reproject data
+    artifact_mfc2_new <- spTransform(artifact_mfc2, crs(aoi))
+    artifact2_mfc2_new <- spTransform(artifact2_mfc2, crs(aoi))
+    
+    MFC2_bbox <- as(extent(515379.3, 516012.9, 4468068.3, 4468567.9), 'SpatialPolygons')
+    crs(MFC2_bbox) <- crs("+proj=utm +zone=33 +datum=WGS84 +units=m +no_defs")
+    GOR_bbox <- as(extent(519177.4, 519889, 4461970.6, 4462834), 'SpatialPolygons')
+    crs(GOR_bbox) <- crs("+proj=utm +zone=33 +datum=WGS84 +units=m +no_defs")
+    
     site <- toupper(site)
     # Read the NDWIs in and stack them
     ndwi_dir <- file.path(ndwi_crop_dir, site, year)
+    
     ndwi_list <- list.files(ndwi_dir,recursive = TRUE, 
                             full.names = TRUE, pattern="^NDWI_")
     
@@ -214,26 +291,8 @@ NDWI_dfs_site_year <- function(site, year){
     ndwi_list_selected <- cbind(ndwi_list_df, select_10m_df)
     ndwi_list_selected <- ndwi_list_selected %>% filter(select_10m == TRUE)
     
-    
+    # Be aware that the loaded NDWIs for MFC2 already have the artifacts removed inside "write_NDWI_site_year" function
     ndwi_stack <- stack(ndwi_list_selected$ndwi_list)
-    
-    
-    # Remove the artifact(parking lot) from NDWI rasterstack for MFC2
-    if (site == "MFC2"){
-        
-        ndwi_stack_wo_artifact  <-  ndwi_stack
-        for (i in 1:nlayers(ndwi_stack)) {
-            
-            r1 <- ndwi_stack[[i]]
-            r1[artifact_mfc2_new] <- 94
-            r1[artifact2_mfc2_new] <- 94
-            names(r1) <- names(ndwi_stack[[i]])
-            rna <- reclassify(r1, cbind(94, NA))
-            ndwi_stack_wo_artifact [[i]]  <-  rna
-            
-        }
-        ndwi_stack <- ndwi_stack_wo_artifact
-    }
     
     
     poly <- fortify(aoi)
@@ -263,11 +322,12 @@ NDWI_dfs_site_year <- function(site, year){
     
     # Convert character dates in raster names  to DOY (used for plot)
     df_date <- as.data.frame(sntnlDates)
+    
     ndwi_stack_renamed <- ndwi_stack
+    
     names(ndwi_stack_renamed) <- apply(df_date, 1, char_to_doy)
     
-    # save the selected NDWI stack into drive to use in "correlation"
-    save_dir <- here("Desktop","Playground_dir_14", "NDWI")
+    
     
     if(!dir.exists(here("Desktop","Playground_dir_14", "NDWI", toupper(site)))){
         dir.create(here("Desktop","Playground_dir_14", "NDWI", toupper(site)))
@@ -275,48 +335,73 @@ NDWI_dfs_site_year <- function(site, year){
     if(!dir.exists(here("Desktop","Playground_dir_14", "NDWI", toupper(site), "Extracted_dfs"))){
         dir.create(here("Desktop","Playground_dir_14", "NDWI", toupper(site), "Extracted_dfs"))
     }
-    saveRDS(ndwi_stack_renamed, file.path(save_dir, toupper(site), 
-                                          "Extracted_dfs", sprintf("selected_ndwi_stack_%s_%s",site,year)))
     
+    # saveRDS(ndwi_stack_renamed, file.path(save_dir, toupper(site), 
+    #                                       "Extracted_dfs", sprintf("selected_ndwi_stack_%s_%s",site,year)))
+    
+    # I had to use "writeRaster()" for "MFC2" as I change the rasters to remove artifacts
+    # stackSave() can only be used when the layers of stack are already saved on the drive
+    
+    stackSave(ndwi_stack_renamed, file.path(save_dir, toupper(site), 
+                                            "Extracted_dfs", sprintf("selected_ndwi_stack_%s_%s", site, year))
+    )
+
     
     # Plot method 1
     # use colorbrewer which loads with the rasterVis package to generate
     # a color ramp of yellow to green
     cols <- colorRampPalette(brewer.pal(11, "RdBu"))
-    if(!dir.exists(here("Desktop","Playground_dir_8", "NDWI", site))){
-        dir.create(here("Desktop","Playground_dir_8", "NDWI",  site))
+    
+    if(!dir.exists(here(save_dir, site))){
+        dir.create(here(save_dir,  site))
     }
     
-    if(!dir.exists(here("Desktop","Playground_dir_8", "NDWI", site, year))){
-        dir.create(here("Desktop","Playground_dir_8", "NDWI",  site, year))
+    if(!dir.exists(here(save_dir, site, year))){
+        dir.create(here(save_dir,  site, year))
     }
-    write_dir <- file.path(here("Desktop","Playground_dir_8", "NDWI",  
-                                site,
-                                year))
     
-    png(here(write_dir, paste0(sprintf("ndwi_%s_%s", tolower(site), year), ".png")))
+    # save the NDWI plots of selected tiles
+    
+    write_dir_specific <- file.path(write_dir,  
+                                    site,
+                                    year)
+    
+    png(here(write_dir_specific, paste0(sprintf("ndwi_%s_%s", tolower(site), year), ".png")))
     
     # define breaks for levelplot()
     my.at <- seq(-1, 1, by = 0.1)
+   
     myColorkey <- list(at=my.at, ## where the colors change
                        labels=list(
                            at=my.at ## where to print labels
                        ),
                        space="bottom")
     
-    if (site=="MFC2"){ 
-        print(levelplot(ndwi_stack_renamed,main=sprintf("Sentinel2 NDWI %s %s", site, year),col.regions=cols,par.settings=list(layout.heights=list(xlab.key.padding=1)),panel = panel.levelplot.raster, interpolate = TRUE,colorkey = list(space="bottom"), margin = FALSE) + layer(sp.polygons(aoi, col = "black"))) 
-    }else{ 
-        print(levelplot(ndwi_stack_renamed,main=sprintf("Sentinel2 NDWI %s %s", site, year),col.regions=cols,par.settings=list(layout.heights=list(xlab.key.padding=1)),panel = panel.levelplot.raster, interpolate = TRUE,colorkey = list(space="bottom"), margin = FALSE) + layer(sp.polygons(aoi_2, col = "black")))
+    # for plotting study site boundaries on the rasters drawn by levelplot(), use of spplot() is favored over layer()
+    # As by calling layer() inside the function, it did not have time to plot the boundaries and dev.off() was performed immediately afterward.
+    if(site == "MFC2"){ 
+        
+        p <- levelplot(ndwi_stack_renamed, main=sprintf("Sentinel2 NDWI %s %s", site, year), col.regions=cols, par.settings=list(layout.heights=list(xlab.key.padding=1)), panel = panel.levelplot.raster, interpolate = TRUE, colorkey = list(space="bottom"), margin = FALSE)
+        
+        #print( p + layer(sp.polygons(aoi, col = "black"))) 
+        
+        print( p + spplot(aoi, fill = "transparent", col = "black", xlim = c(extent(ndwi_stack_renamed)@xmin, 
+                                                                                      extent(ndwi_stack_renamed)@xmax), ylim = c(extent(ndwi_stack_renamed)@ymin, extent(ndwi_stack_renamed)@ymax), 
+               colorkey = FALSE))
+        
+    }else if(site == "GOR"){ 
+        
+        p <- levelplot(ndwi_stack_renamed, main=sprintf("Sentinel2 NDWI %s %s", site, year), col.regions=cols, par.settings=list(layout.heights=list(xlab.key.padding=1)), panel = panel.levelplot.raster, interpolate = TRUE, colorkey = list(space="bottom"), margin = FALSE)
+        
+        #print( p + layer(sp.polygons(aoi_2, col = "black")))
+        
+        print( p + spplot(aoi_2, fill = "transparent", col = "black", xlim = c(extent(ndwi_stack_renamed)@xmin, 
+                                                                            extent(ndwi_stack_renamed)@xmax), ylim = c(extent(ndwi_stack_renamed)@ymin, extent(ndwi_stack_renamed)@ymax), 
+                         colorkey = FALSE))
     }
     
     
     dev.off()
-    
-    
-    write_dir <- file.path(here("Desktop","Playground_dir_8", "NDWI",
-                                site,
-                                year))
     
     
     # calculate mean NDWI for each raster
@@ -354,18 +439,16 @@ NDWI_dfs_site_year <- function(site, year){
     avg_NDWI_stack$date <- as.data.frame(sentinelDates)
     avg_NDWI_stack$doy <- apply(avg_NDWI_stack[,3], 1, char_to_doy)
     
-    # Save the avearge NDWI dataframe to drive (will be used in "13_correlation_NDVI_meteo.R")
-    if(!dir.exists(here("Desktop","Playground_dir_8", "NDWI", "output"))){
-        dir.create(here("Desktop","Playground_dir_8", "NDWI",  "output"))
+    # Save the avearge NDWI dataframe to drive (will be used in "17_Correlation_TAs_with_VIs.R")
+    if(!dir.exists(save_dir_avg)){
+        dir.create(save_dir_avg)
     }
     
-    save_dir <- file.path(here("Desktop", "Playground_dir_8", "NDWI","output"))
-    saveRDS(avg_NDWI_stack, file = file.path(save_dir, 
-                                             paste0("avg_NDWI_stack_", site, "_", year)) )#, ".Rds"
+    
+    saveRDS(avg_NDWI_stack, file = file.path(save_dir_avg, 
+                                             paste0("avg_NDWI_stack_", site, "_", year)) )
     
     
-    # In the dataframe some of the same doy has the same NDWI too,
-    # that is why the number of dots is less than the number of dataframe rows
     # plot NDWI
     ggplot(avg_NDWI_stack, aes(doy, meanNDWI), na.rm=TRUE) +
         geom_point(size=4, colour = "PeachPuff4") + 
@@ -382,7 +465,7 @@ NDWI_dfs_site_year <- function(site, year){
               aspect.ratio= 12/16)
     
     
-    ggsave(here(write_dir, paste0(sprintf("ndwi_series_%s", tolower(site)), ".png")), 
+    ggsave(here(write_dir_specific, paste0(sprintf("ndwi_series_%s", tolower(site)), ".png")), 
            scale = 3, 
            #width = 15, 
            #height = 10,
@@ -391,7 +474,20 @@ NDWI_dfs_site_year <- function(site, year){
     
 }
 
-NDWI_dfs_site_year(site, year)
+# input directory
+ndwi_crop_dir <- here("Desktop", "Playground_dir_15") 
+
+# save the selected NDWI stack into drive to use in "correlation"
+save_dir <- here("Desktop","Playground_dir_14", "NDWI")
+
+# directory for saving NDWI plots of selected tiles and NDWI time series as png files
+write_dir <- here("Desktop","Playground_dir_8", "NDWI")
+
+# directory for saving average of NDWI stack over whole study area 
+save_dir_avg <- here("Desktop", "Playground_dir_8", "NDWI","output")
+
+
+NDWI_dfs_site_year(site, year, ndwi_crop_dir, save_dir, write_dir, save_dir_avg)
 
 
 

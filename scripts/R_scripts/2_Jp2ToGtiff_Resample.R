@@ -1,11 +1,12 @@
 ##############
-# The following snippet is converting the .jp2 bands of sentinel2 to .tiff files
-# and removing the jp2 bands afterward
+# The following function(jp2ToGtif) converts the .jp2 bands of S2 to .tiff files
+# and removes the jp2 bands afterward(for B2348,B8A,B11,B05)
 ################
 
 #set working directory
 setwd("C:/Users/sanaz/")
 
+jp2ToGtif <- function(path){
 #1: Load R packages
 ## Install & load packages
 pck <- (c("tidyr","rgdal","ggplot2","raster","leaflet","rasterVis",
@@ -17,10 +18,8 @@ sapply(pck , require, character.only=TRUE)
 
 
 
-#here("MB12-project","CREODIAS_part","data_from_CREODIAS","L2A_2018")
-
 # Load Sentinel2 safe directories
-S2_names_safe <- here("Documents","MB12-project","CREODIAS_part","data_from_CREODIAS","L2A_2017_sen2cor")#"C:/Users/sanaz/Documents/MB12-project/CREODIAS_part/data_from_CREODIAS/L2A_2017"#
+S2_names_safe <- path#here("Documents","MB12-project","CREODIAS_part","data_from_CREODIAS","L2A_2018_sen2cor")
 
 S2_names_1 <- list.files(S2_names_safe, recursive = FALSE, full.names = TRUE, 
                          pattern="*.SAFE$")#for 2019 & 2020: "*.SAFE$"
@@ -40,7 +39,7 @@ if(length(S2_safe_dir_T)){S2_gtiff_T <- pbapply::pblapply(1:length(S2_safe_dir_T
                      path_name <- file.path(base_dir, name); gdal_translate(S2_safe_dir_T[x], path_name); 
                      unlink(S2_safe_dir_T[x], recursive=TRUE, force = TRUE)}) }
 
-if(length(S2_safe_dir_L2A)){S2_gtiff_L2A <- pbapply::pblapply(1:length(S2_safe_dir_L2A), 
+ if(length(S2_safe_dir_L2A)){S2_gtiff_L2A <- pbapply::pblapply(1:length(S2_safe_dir_L2A), 
                        function(x){base_dir <- sub("L2A_[[:alnum:]]{6}_[[:alnum:]]{15}_B0[2,3,4,8]_10m.jp2$", "", S2_safe_dir_L2A[x]); 
                        name <- paste0(strsplit(basename(S2_safe_dir_L2A[x]),'[.]')[[1]][1],".tif"); 
                        path_name <- file.path(base_dir, name); gdal_translate(S2_safe_dir_L2A[x], path_name);
@@ -59,14 +58,16 @@ S2_safe_dir_B11_L2A <- list.files(S2_names_1, recursive = TRUE, full.names = TRU
 if(length(S2_safe_dir_B11_T)){S2_gtiff_B11_T <- pbapply::pblapply(1:length(S2_safe_dir_B11_T), 
                      function(x){base_dir <- sub("[[:alnum:]]{6}_[[:alnum:]]{15}_B11_20m.jp2$", "", S2_safe_dir_B11_T[x]); 
                      name <- paste0(strsplit(basename(S2_safe_dir_B11_T[x]),'[.]')[[1]][1],".tif"); 
-                     path_name <- file.path(base_dir, name); gdal_translate(S2_safe_dir_B11_T[x], path_name); 
-                     unlink(S2_safe_dir_B11_T[x], recursive=TRUE, force = TRUE)}) }
+                     path_name <- file.path(base_dir, name); gdal_translate(S2_safe_dir_B11_T[x], path_name)
+                     #;unlink(S2_safe_dir_B11_T[x], recursive=TRUE, force = TRUE)
+                     }) }
 
 if(length(S2_safe_dir_B11_L2A)){S2_gtiff_B11_L2A <- pbapply::pblapply(1:length(S2_safe_dir_B11_L2A), 
                        function(x){base_dir <- sub("L2A_[[:alnum:]]{6}_[[:alnum:]]{15}_B11_20m.jp2$", "", S2_safe_dir_B11_L2A[x]); 
                        name <- paste0(strsplit(basename(S2_safe_dir_B11_L2A[x]),'[.]')[[1]][1],".tif"); 
-                       path_name <- file.path(base_dir, name); gdal_translate(S2_safe_dir_B11_L2A[x], path_name);
-                       unlink(S2_safe_dir_B11_L2A[x], recursive=TRUE, force = TRUE)})}
+                       path_name <- file.path(base_dir, name); gdal_translate(S2_safe_dir_B11_L2A[x], path_name)
+                       #;unlink(S2_safe_dir_B11_L2A[x], recursive=TRUE, force = TRUE)
+                       })}
 
 # B8A
 S2_safe_dir_B8a_T <- list.files(S2_names_1, recursive = TRUE, full.names = TRUE, 
@@ -78,16 +79,47 @@ S2_safe_dir_B8a_L2A <- list.files(S2_names_1, recursive = TRUE, full.names = TRU
 if(length(S2_safe_dir_B8a_T)){S2_gtiff_B8a_T <- pbapply::pblapply(1:length(S2_safe_dir_B8a_T), 
                                                                   function(x){base_dir <- sub("[[:alnum:]]{6}_[[:alnum:]]{15}_B8A_20m.jp2$", "", S2_safe_dir_B8a_T[x]); 
                                                                   name <- paste0(strsplit(basename(S2_safe_dir_B8a_T[x]),'[.]')[[1]][1],".tif"); 
-                                                                  path_name <- file.path(base_dir, name); gdal_translate(S2_safe_dir_B8a_T[x], path_name); 
-                                                                  unlink(S2_safe_dir_B8a_T[x], recursive=TRUE, force = TRUE)}) }
+                                                                  path_name <- file.path(base_dir, name); gdal_translate(S2_safe_dir_B8a_T[x], path_name)
+                                                                  #;unlink(S2_safe_dir_B8a_T[x], recursive=TRUE, force = TRUE)
+                                                                  }) }
 
 if(length(S2_safe_dir_B8a_L2A)){S2_gtiff_B8a_L2A <- pbapply::pblapply(1:length(S2_safe_dir_B8a_L2A), 
-                                                                      function(x){base_dir <- sub("L2A_[[:alnum:]]{6}_[[:alnum:]]{15}_B11_20m.jp2$", "", S2_safe_dir_B8a_L2A[x]); 
+                                                                      function(x){base_dir <- sub("L2A_[[:alnum:]]{6}_[[:alnum:]]{15}_B8A_20m.jp2$", "", S2_safe_dir_B8a_L2A[x]); 
                                                                       name <- paste0(strsplit(basename(S2_safe_dir_B8a_L2A[x]),'[.]')[[1]][1],".tif"); 
-                                                                      path_name <- file.path(base_dir, name); gdal_translate(S2_safe_dir_B8a_L2A[x], path_name);
-                                                                      unlink(S2_safe_dir_B8a_L2A[x], recursive=TRUE, force = TRUE)})}
+                                                                      path_name <- file.path(base_dir, name); gdal_translate(S2_safe_dir_B8a_L2A[x], path_name)
+                                                                      #;unlink(S2_safe_dir_B8a_L2A[x], recursive=TRUE, force = TRUE)
+                                                                      })}
+# B05
+S2_safe_dir_B5_T <- list.files(S2_names_1, recursive = TRUE, full.names = TRUE, 
+                                pattern="^[T][[:alnum:]]{5}_[[:alnum:]]{15}_B05_20m.jp2$")#^[T][[:alnum:]]{5}_[[:alnum:]]{15}_
+S2_safe_dir_B5_L2A <- list.files(S2_names_1, recursive = TRUE, full.names = TRUE, 
+                                  pattern="L2A_[[:alnum:]]{6}_[[:alnum:]]{15}_B05_20m.jp2$")
+
+# Convert jp2 to Gtiff and remove the Jp2 bands for B05(20m resolution)
+if(length(S2_safe_dir_B5_T)){S2_gtiff_B5_T <- pbapply::pblapply(1:length(S2_safe_dir_B5_T), 
+                                                                  function(x){base_dir <- sub("[[:alnum:]]{6}_[[:alnum:]]{15}_B05_20m.jp2$", "", S2_safe_dir_B5_T[x]); 
+                                                                  name <- paste0(strsplit(basename(S2_safe_dir_B5_T[x]),'[.]')[[1]][1],".tif"); 
+                                                                  path_name <- file.path(base_dir, name); gdal_translate(S2_safe_dir_B5_T[x], path_name) 
+                                                                  #; unlink(S2_safe_dir_B7_T[x], recursive=TRUE, force = TRUE)
+                                                                  }) }
+
+if(length(S2_safe_dir_B5_L2A)){S2_gtiff_B5_L2A <- pbapply::pblapply(1:length(S2_safe_dir_B5_L2A), 
+                                                                      function(x){base_dir <- sub("L2A_[[:alnum:]]{6}_[[:alnum:]]{15}_B05_20m.jp2$", "", S2_safe_dir_B5_L2A[x]); 
+                                                                      name <- paste0(strsplit(basename(S2_safe_dir_B5_L2A[x]),'[.]')[[1]][1],".tif"); 
+                                                                      path_name <- file.path(base_dir, name); gdal_translate(S2_safe_dir_B5_L2A[x], path_name)
+                                                                      #; unlink(S2_safe_dir_B7_L2A[x], recursive=TRUE, force = TRUE)
+                                                                      })}
 
 
+
+
+}
+
+library(here)
+path <- here("Documents","MB12-project","CREODIAS_part","data_from_CREODIAS","L2A_2018_sen2cor")
+
+# call the function to work on the specified path
+jp2ToGtif(path)
 
 
 # resample B11 to 10 m resolution (This part is not necessary anymore(reason of commenting this section) as NDWI(Gao) needs B8A(with 20m resolution and not B8))
