@@ -3,6 +3,7 @@
 setwd("C:/Users/sanaz/")
 
 library(here)
+library(pbapply)
 
 
 ###########################################################################
@@ -13,9 +14,9 @@ library(here)
 ###                                                                     ###
 ###########################################################################
 ###########################################################################
+
 ## Unzip tiles using the unzip_s2_tiles() function in "1_Unzip.R" script
 source(here("Documents", "MB12-project", "scripts", "R_scripts", "1_Unzip.R"))
-
 
 year_list <- list(2017, 2018)
 
@@ -31,7 +32,6 @@ pbapply::pblapply(1:length(year_list),
                   }
 )
 
-
 year_list_2 <- list(2019, 2020)
 
 pbapply::pblapply(1:length(year_list_2), 
@@ -45,7 +45,6 @@ pbapply::pblapply(1:length(year_list_2),
                     unzip_s2_tiles(path_zip, out_dir)
                   }
 )
-
 
 ############################################################################
 ############################################################################
@@ -96,7 +95,6 @@ rgb_dir <- here("Desktop", "Playground_dir_10")
 
 site_list <- list("MFC2", "GOR")
 
-
 pbapply::pblapply(1:length(site_list), function(x) pbapply::pblapply(1:length(year_list), 
                                                function(y) {
                                                  year_dir <- sprintf("L2A_%s_sen2cor", year_list[[y]][1])
@@ -114,7 +112,6 @@ pbapply::pblapply(1:length(site_list), function(x) pbapply::pblapply(1:length(ye
                                                                        
                                                                        write_rgb(path, site_list[[x]][1], year_list_2[[y]][1])
                                                                      }))
-
 
 ############################################################################
 ############################################################################
@@ -158,7 +155,6 @@ source(here("Documents", "MB12-project", "scripts", "R_scripts","9_Cropped_Ndvi_
 
 # Output directory of NDVI( change to your preferred directory)
 ndvi_crop_dir <- here("Desktop", "Playground_dir_8", "NDVI")
-
 
 pbapply::pblapply(1:length(site_list), function(x) pbapply::pblapply(1:length(year_list), 
                                                                      function(y) {
@@ -210,10 +206,12 @@ pbapply::pblapply(1:length(site_list), function(x) pbapply::pblapply(1:length(fu
                                                                      function(y) {
                                                                        
                                                                        NDVI_plots_site_year(site_list[[x]][1], full_year_list[[y]][1], 
-                                                                                            ndvi_dir, rgb_dir, save_dir, save_dir_avg)
+                                                                                            ndvi_dir_base, 
+                                                                                            rgb_dir_base, 
+                                                                                            save_dir, 
+                                                                                            save_dir_avg)
                                                                        
                                                                      }))
-
 
 ###########################################################################
 ###########################################################################
@@ -275,9 +273,6 @@ write_dir_ndwi <- here("Desktop","Playground_dir_8", "NDWI")
 save_dir_avg_ndwi <- here("Desktop", "Playground_dir_8", "NDWI","output")
 
 
-NDWI_dfs_site_year(site, year, ndwi_crop_dir, save_dir, write_dir, save_dir_avg)
-
-
 pbapply::pblapply(1:length(site_list), function(x) pbapply::pblapply(1:length(full_year_list), 
                                                                      function(y) {
                                                                        
@@ -316,7 +311,6 @@ out_dir <- here(vi_dir, "output")
 # list of VIs
 vi_list <- list("NDVI", "NDWI")
 
-
 pbapply::pblapply(1:length(vi_list), function(x) pbapply::pblapply(1:length(site_list), 
                                                                      function(y) {
                                                                        corr_ta_vi(vi=vi_list[[y]][1], 
@@ -325,7 +319,6 @@ pbapply::pblapply(1:length(vi_list), function(x) pbapply::pblapply(1:length(site
                                                                                   dir_ta = dir_ta, 
                                                                                   out_dir = out_dir) 
                                                                      }))
-
 
 ############################################################################
 ############################################################################
