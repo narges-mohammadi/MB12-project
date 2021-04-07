@@ -1,6 +1,6 @@
 
-# This script is the converting of the python script provided 
-# in "https://creodias.eu/forum/-/message_boards/message/150362?_19_redirect=https%3A%2F%2Fcreodias.eu%2Fknowledgebase%3Fp_p_id%3D3%26p_p_lifecycle%3D0%26p_p_state%3Dmaximized%26p_p_mode%3Dview%26_3_redirect%3D%252Fknowledgebase%253Fp_p_id%253D3%2526p_p_lifecycle%253D0%2526p_p_state%253Dnormal%2526p_p_mode%253Dview%2526_3_groupId%253D0%26_3_keywords%3Ddownload%2Bthe%2Bordered%2Bproducts%2Busing%2BCLI%2Bby%2BFinder%2BAPI%26_3_groupId%3D0%26_3_struts_action%3D%252Fsearch%252Fsearch"
+# This script converts the python script provided in 
+# "https://creodias.eu/forum/-/message_boards/message/150362?_19_redirect=https%3A%2F%2Fcreodias.eu%2Fknowledgebase%3Fp_p_id%3D3%26p_p_lifecycle%3D0%26p_p_state%3Dmaximized%26p_p_mode%3Dview%26_3_redirect%3D%252Fknowledgebase%253Fp_p_id%253D3%2526p_p_lifecycle%253D0%2526p_p_state%253Dnormal%2526p_p_mode%253Dview%2526_3_groupId%253D0%26_3_keywords%3Ddownload%2Bthe%2Bordered%2Bproducts%2Busing%2BCLI%2Bby%2BFinder%2BAPI%26_3_groupId%3D0%26_3_struts_action%3D%252Fsearch%252Fsearch"
 # into R 
 
 library(httr)
