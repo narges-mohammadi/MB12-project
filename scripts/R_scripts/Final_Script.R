@@ -31,6 +31,31 @@ download_path <- here("Desktop", "Playground_dir_17")
 # call the function to start downloading
 download_creodias(username, password, finder_api_url, download_path)
 
+############################################################################
+############################################################################
+###                                                                      ###
+###                              SECTION 2:                              ###
+###                         SEN2COR (L1C TO L2A)                         ###
+###                                                                      ###
+############################################################################
+############################################################################
+
+# convert L1C to L2A
+source(here("Documents", "MB12-project", "scripts", "R_scripts", "L1C_to_L2A.R"))
+
+# path of folder containing "L1C" data
+inFolder <-  here("Desktop", "Playground_dir_16", "L1C_2018")
+
+# path of folder where "L2A" should be saved
+outFolder <-  here("Desktop", "Playground_dir_16", "L2A_2018")
+
+# Insert the path where "Sen2Cor" is installed in computer
+L2A_process_path <-  here("Documents",  "Sen2Cor-02.08.00-win64", "L2A_Process.bat ")
+
+# invoke function to start converting
+L1c2L2a(inFolder, L2A_process_path, outFolder)
+
+
 
 ###########################################################################
 ###########################################################################
