@@ -4,10 +4,38 @@ setwd("C:/Users/sanaz/")
 library(here)
 library(pbapply)
 
+############################################################################
+############################################################################
+###                                                                      ###
+###                              SECTION 1:                              ###
+###                       DATA DOWNLOAD (CREODIAS)                       ###
+###                                                                      ###
+############################################################################
+############################################################################
+
+## Download S2 data from creodias
+source(here("Documents", "MB12-project", "scripts", "R_scripts", "download_from_creodias.R"))
+
+# Here insert your credentials from creodias
+username <- "YOUR CREODIAS USERNAME HERE"
+
+password <- "YOUR CREODIAS PASSWORD HERE"
+
+# The 'finder_api_url' is "Rest query" created after specifying search criteria in "https://finder.creodias.eu/";
+# one should visit the mentioned website, search for the product and copy the content of "Rest query" to the following line
+finder_api_url = 'https://finder.creodias.eu/resto/api/collections/Sentinel2/search.json?maxRecords=10&startDate=2021-04-01T00%3A00%3A00Z&completionDate=2021-04-07T23%3A59%3A59Z&cloudCover=%5B0%2C80%5D&processingLevel=LEVEL1C&geometry=POLYGON((14.900562186990717+40.62231989565893%2C14.936503116659681+40.597907191371405%2C14.95920265118745+40.63380514092955%2C14.900562186990717+40.62231989565893))&sortParam=startDate&sortOrder=descending&status=all&dataset=ESA-DATASET'
+
+# specify where the files should be saved on drive
+download_path <- here("Desktop", "Playground_dir_17")
+
+# call the function to start downloading
+download_creodias(username, password, finder_api_url, download_path)
+
+
 ###########################################################################
 ###########################################################################
 ###                                                                     ###
-###                              SECTION 1:                             ###
+###                              SECTION 3:                             ###
 ###                             UNZIP TILES                             ###
 ###                                                                     ###
 ###########################################################################
@@ -47,7 +75,7 @@ pbapply::pblapply(1:length(year_list_2),
 ############################################################################
 ############################################################################
 ###                                                                      ###
-###                              SECTION 2:                              ###
+###                              SECTION 4:                              ###
 ###                         CONVERT JP2 TO GTIFF                         ###
 ###                                                                      ###
 ############################################################################
@@ -79,8 +107,8 @@ pbapply::pblapply(1:length(year_list_2),
 ############################################################################
 ############################################################################
 ###                                                                      ###
-###                              SECTION 3:                              ###
-###                           CREATE RGB FILES                           ###
+###                              SECTION 5:                              ###
+###                              RGB FILES                               ###
 ###                                                                      ###
 ############################################################################
 ############################################################################
@@ -114,7 +142,7 @@ pbapply::pblapply(1:length(site_list), function(x) pbapply::pblapply(1:length(ye
 ############################################################################
 ############################################################################
 ###                                                                      ###
-###                              SECTION 4:                              ###
+###                              SECTION 6:                              ###
 ###                      SELECT TILES WITHOUT CLOUD                      ###
 ###                                                                      ###
 ############################################################################
@@ -142,8 +170,8 @@ pbapply::pblapply(1:length(site_list), function(x) pbapply::pblapply(1:length(ye
 ###########################################################################
 ###########################################################################
 ###                                                                     ###
-###                              SECTION 5:                             ###
-###                         CREATE NDVIS & SAVE                         ###
+###                              SECTION 7:                             ###
+###         NORMALIZED DIFFERENCE VEGETATION INDEX (NDVI) TIFFS         ###
 ###                                                                     ###
 ###########################################################################
 ###########################################################################
@@ -174,14 +202,14 @@ pbapply::pblapply(1:length(site_list), function(x) pbapply::pblapply(1:length(ye
                                                                        
                                                                      }))
 
-############################################################################
-############################################################################
-###                                                                      ###
-###                              SECTION 6:                              ###
-###    SAVE NDVI-DATAFRAMES, -PLOTS OF SELECTED TILES & -TIME SERIES     ###
-###                                                                      ###
-############################################################################
-############################################################################
+###########################################################################
+###########################################################################
+###                                                                     ###
+###                              SECTION 8:                             ###
+###                 NDVI DATAFRAMES & TIME SERIES PLOTS                 ###
+###                                                                     ###
+###########################################################################
+###########################################################################
 
 # Save NDVI dataframes, NDVI-plots of selected tiles & NDVI time series 
 
@@ -211,14 +239,14 @@ pbapply::pblapply(1:length(site_list), function(x) pbapply::pblapply(1:length(fu
                                                                        
                                                                      }))
 
-###########################################################################
-###########################################################################
-###                                                                     ###
-###                              SECTION 7:                             ###
-###                         CREATE NDWIS & SAVE                         ###
-###                                                                     ###
-###########################################################################
-###########################################################################
+############################################################################
+############################################################################
+###                                                                      ###
+###                              SECTION 9:                              ###
+###      NORMALIZED DIFFERENCE WATER INDEX (NDWI) [GAO, 1996] TIFFS      ###
+###                                                                      ###
+############################################################################
+############################################################################
 
 # Create NDWIs and save to drive
 source(here("Documents", "MB12-project", "scripts", "R_scripts","16_NDWI.R"))
@@ -247,14 +275,14 @@ pbapply::pblapply(1:length(site_list), function(x) pbapply::pblapply(1:length(ye
                                                                        
                                                                      }))
 
-############################################################################
-############################################################################
-###                                                                      ###
-###                              SECTION 8:                              ###
-###    SAVE NDWI-DATAFRAMES, -PLOTS OF SELECTED TILES & -TIME SERIES     ###
-###                                                                      ###
-############################################################################
-############################################################################
+###########################################################################
+###########################################################################
+###                                                                     ###
+###                             SECTION 10:                             ###
+###                 NDWI DATAFRAMES & TIME SERIES PLOTS                 ###
+###                                                                     ###
+###########################################################################
+###########################################################################
 
 # Saves NDWI dataframes to drive, also plots the NDWI time series & writes the dfs & plots to drive
 
@@ -270,7 +298,6 @@ write_dir_ndwi <- here("Desktop","Playground_dir_8", "NDWI")
 # directory for saving average of NDWI stack over whole study area 
 save_dir_avg_ndwi <- here("Desktop", "Playground_dir_8", "NDWI","output")
 
-
 pbapply::pblapply(1:length(site_list), function(x) pbapply::pblapply(1:length(full_year_list), 
                                                                      function(y) {
                                                                        
@@ -283,14 +310,14 @@ pbapply::pblapply(1:length(site_list), function(x) pbapply::pblapply(1:length(fu
                                                                        
                                                                      }))
 
-###########################################################################
-###########################################################################
-###                                                                     ###
-###                              SECTION 9:                             ###
-###           CORRELATION OF VI_S WITH TOPOGRAPHIC ATTRIBUTES           ###
-###                                                                     ###
-###########################################################################
-###########################################################################
+############################################################################
+############################################################################
+###                                                                      ###
+###                              SECTION 11:                             ###
+###  CORRELATION OF VEGETATION INDEXES WITH TOPOGRAPHIC ATTRIBUTES(TAS)  ###
+###                                                                      ###
+############################################################################
+############################################################################
 
 # Correlation 
 source(here("Documents", "MB12-project", "scripts", "R_scripts","17_Correlation_TAs_with_VIs.R"))
@@ -321,7 +348,7 @@ pbapply::pblapply(1:length(vi_list), function(x) pbapply::pblapply(1:length(site
 ############################################################################
 ############################################################################
 ###                                                                      ###
-###                              SECTION 10:                             ###
+###                              SECTION 12:                             ###
 ###                     VISUALIZATION OF CORRELATION                     ###
 ###                                                                      ###
 ############################################################################
