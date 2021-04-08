@@ -11,7 +11,7 @@ library(here)
 get_keycloak_token <- function(username, password){
   
   ## Install & load packages
-  pck <- (c("httr"))# "rkt" : for time series analysis
+  pck <- (c("httr"))
   
   new_pck <- pck[!pck %in% installed.packages()[,"Package"]]
   
@@ -74,7 +74,7 @@ password <- "YOUR CREODIAS PASSWORD HERE"
 
 # specify where the files should be saved on drive in "download_path"
 
-#download_path <- here("Desktop", "Playground_dir_17")
+#download_path <- here::here("CREODIAS_part", "data_from_CREODIAS")
 
 download_creodias <- function(username, password, finder_api_url, download_path){
   
@@ -125,4 +125,5 @@ download_creodias <- function(username, password, finder_api_url, download_path)
   }
 }
 
-download_creodias(username, password, finder_api_url, download_path)
+# invoke the function with parameters
+#download_creodias(username, password, finder_api_url, download_path)
