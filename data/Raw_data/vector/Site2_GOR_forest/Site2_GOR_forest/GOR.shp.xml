@@ -1,0 +1,2 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata xml:lang="en"><Esri><CreaDate>20190311</CreaDate><CreaTime>16163400</CreaTime><ArcGISFormat>1.0</ArcGISFormat><SyncOnce>TRUE</SyncOnce><DataProperties><lineage><Process ToolSource="c:\program files (x86)\arcgis\desktop10.1\ArcToolbox\Toolboxes\Conversion Tools.tbx\RasterToPolygon" Date="20150202" Time="153128">RasterToPolygon bactomb3 D:\ALENTO\Gorga\Bacino_Tomb.shp SIMPLIFY VALUE</Process></lineage></DataProperties></Esri></metadata>

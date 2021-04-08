@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+<Document id="root_doc">
+<Schema name="house" id="house">
+	<SimpleField name="id" type="float"></SimpleField>
+	<SimpleField name="descrpt" type="string"></SimpleField>
+</Schema>
+<Folder><name>house</name>
+  <Placemark>
+	<Style><LineStyle><color>ff0000ff</color></LineStyle><PolyStyle><fill>0</fill></PolyStyle></Style>
+	<ExtendedData><SchemaData schemaUrl="#house">
+		<SimpleData name="id">1</SimpleData>
+		<SimpleData name="descrpt">near_parking_lot</SimpleData>
+	</SchemaData></ExtendedData>
+      <MultiGeometry><Polygon><outerBoundaryIs><LinearRing><coordinates>15.1872601844336,40.3653767376251 15.1873330036652,40.3655146365131 15.1875001200157,40.3654609723378 15.187419409435,40.3653271160304 15.1872601844336,40.3653767376251</coordinates></LinearRing></outerBoundaryIs></Polygon></MultiGeometry>
+  </Placemark>
+  <Placemark>
+	<Style><LineStyle><color>ff0000ff</color></LineStyle><PolyStyle><fill>0</fill></PolyStyle></Style>
+	<ExtendedData><SchemaData schemaUrl="#house">
+		<SimpleData name="id">2</SimpleData>
+		<SimpleData name="descrpt">north_parking_lot</SimpleData>
+	</SchemaData></ExtendedData>
+      <MultiGeometry><Polygon><outerBoundaryIs><LinearRing><coordinates>15.1879033895782,40.3660264889864 15.1879707970838,40.3661120103106 15.1880128924047,40.3660938082922 15.1880194944648,40.3660998420907 15.18803397365,40.3660967962853 15.1881158717925,40.3661833013854 15.1881697841882,40.3661519836043 15.1881486132829,40.3661167582818 15.1881985828578,40.3660884691668 15.1880809647367,40.3659445991697 15.1879033895782,40.3660264889864</coordinates></LinearRing></outerBoundaryIs></Polygon></MultiGeometry>
+  </Placemark>
+</Folder>
+</Document></kml>
