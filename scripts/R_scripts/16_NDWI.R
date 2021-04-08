@@ -8,8 +8,6 @@
 # This code snippet is equivalent for "9_Ndvi_from_Gtiff_Function" for NDWI
 ##################
 
-setwd("C:/Users/sanaz/")
-
 
 # This function calculates NDWI for the specific year and study area & writes them on the drive
 write_NDWI_site_year <- function(path, site, year, ndwi_crop_dir){
@@ -27,10 +25,14 @@ write_NDWI_site_year <- function(path, site, year, ndwi_crop_dir){
     
     #2: Load Auxillary data
     ### Define your area of interest (aoi), which is MFC2 (bacino_MFC_corrected) or bounding_box_MFC or else #
-    aoi <- rgdal::readOGR("C:/Users/sanaz/Documents/MB12-project/data/vector/Site1_MFC2_agroforestry/MFC2.shp")
-    aoi_2 <- rgdal::readOGR("C:/Users/sanaz/Documents/MB12-project/data/vector/Site2_GOR_forest/Site2_GOR_forest/GOR.shp")
-    artifact_mfc2 <- rgdal::readOGR("C:/Users/sanaz/Documents/MB12-project/QGIS_part/parking_lot.shp")
-    artifact2_mfc2 <- rgdal::readOGR("C:/Users/sanaz/Documents/MB12-project/QGIS_part/house.shp")
+    aoi <- rgdal::readOGR(dsn=here::here("data", "Raw_data", "vector", "Site1_MFC2_agroforestry"), layer= "MFC2")
+    
+    aoi_2 <- rgdal::readOGR(dsn=here("data", "Raw_data", "vector","Site2_GOR_forest", "Site2_GOR_forest"), layer="GOR")
+    
+    artifact_mfc2 <- rgdal::readOGR(dsn=here("data", "Raw_data", "vector","QGIS_part"), layer="parking_lot")#"C:/Users/sanaz/Documents/MB12-project/QGIS_part/parking_lot.shp"
+    
+    artifact2_mfc2 <- rgdal::readOGR(dsn=here("data", "Raw_data", "vector","QGIS_part"), layer="house")#"C:/Users/sanaz/Documents/MB12-project/QGIS_part/house.shp"
+    
     
     # reproject data
     artifact_mfc2_new <- spTransform(artifact_mfc2, crs(aoi))
@@ -162,7 +164,6 @@ write_NDWI_site_year <- function(path, site, year, ndwi_crop_dir){
             #paste(strsplit(strsplit(strsplit(S2_names_L2A_v1[(i-1)*4+1],'/')[[1]][9],'[.]')[[1]][1], "_")[[1]][3], strsplit(strsplit(strsplit(S2_names_L2A_v1[(i-1)*4+1],'/')[[1]][9],'[.]')[[1]][1], "_")[[1]][4],sep="_"))
             
             
-            
             # Remove the artifact(parking lot) from NDWI files for MFC2
             if(site == "MFC2"){
                 
@@ -180,7 +181,6 @@ write_NDWI_site_year <- function(path, site, year, ndwi_crop_dir){
             }
             
             name <- names(NDWI_site)
-            ndwi_crop_dir <- here("Desktop","Playground_dir_15")
             if(!dir.exists(file.path(ndwi_crop_dir, site))){dir.create(file.path(ndwi_crop_dir, site))}
             if(!dir.exists(file.path(ndwi_crop_dir, site, as.character(year)))){dir.create(file.path(ndwi_crop_dir, site, as.character(year)))}
             write_dir <- file.path(ndwi_crop_dir,site,as.character(year))
@@ -203,19 +203,17 @@ write_NDWI_site_year <- function(path, site, year, ndwi_crop_dir){
 }
 
 # Change site and year here
-site <- "MFC2"#"GOR" #
-year <- 2017
-
-library(here)
+#site <- "MFC2"#"GOR" #
+#year <- 2017
 
 #input directory(where L2A SAFE folders are located)
-path <- here("Documents","MB12-project","CREODIAS_part",
-     "data_from_CREODIAS", "L2A_2017_sen2cor")#year_dir;L2A_2020
+#path <- here("CREODIAS_part", "data_from_CREODIAS", "L2A_2017_sen2cor")#year_dir;L2A_2020
 
 # output directory
-ndwi_crop_dir <- here("Desktop", "Playground_dir_15")
+#ndwi_crop_dir <- here("Desktop", "Playground_dir_15")
 
-write_NDWI_site_year(path, site, year, ndwi_crop_dir)
+# invoke the function
+#write_NDWI_site_year(path, site, year, ndwi_crop_dir)
 
 
 
@@ -234,12 +232,12 @@ char_to_doy <- function(x) {
 
 
 # use the following "ndwi_crop_dir" for 2017,2018,2019,2020
-if(!dir.exists(here("Desktop", "Playground_dir_8", "NDWI"))){
-    dir.create(here("Desktop", "Playground_dir_8", "NDWI"))
+if(!dir.exists(here("data", "Augmented_data", "Playground_dir_8", "NDWI"))){
+    dir.create(here("data", "Augmented_data", "Playground_dir_8", "NDWI"))
 }
 
-if(!dir.exists(here("Desktop", "Playground_dir_14", "NDWI"))){
-    dir.create(here("Desktop", "Playground_dir_14", "NDWI"))
+if(!dir.exists(here("data", "Augmented_data", "Playground_dir_14", "NDWI"))){
+    dir.create(here("data", "Augmented_data", "Playground_dir_14", "NDWI"))
 }
 
 
@@ -260,10 +258,13 @@ NDWI_dfs_site_year <- function(site, year, ndwi_crop_dir, save_dir, write_dir, s
     
     #2: Load Auxillary data
     ### Define your area of interest (aoi), which is MFC2 (bacino_MFC_corrected) or bounding_box_MFC or else #
-    aoi <- rgdal::readOGR("C:/Users/sanaz/Documents/MB12-project/data/vector/Site1_MFC2_agroforestry/MFC2.shp")
-    aoi_2 <- rgdal::readOGR("C:/Users/sanaz/Documents/MB12-project/data/vector/Site2_GOR_forest/Site2_GOR_forest/GOR.shp")
-    artifact_mfc2 <- rgdal::readOGR("C:/Users/sanaz/Documents/MB12-project/QGIS_part/parking_lot.shp")
-    artifact2_mfc2 <- rgdal::readOGR("C:/Users/sanaz/Documents/MB12-project/QGIS_part/house.shp")
+    aoi <- rgdal::readOGR(dsn=here::here("data", "Raw_data", "vector", "Site1_MFC2_agroforestry"), layer= "MFC2")
+    
+    aoi_2 <- rgdal::readOGR(dsn=here("data", "Raw_data", "vector","Site2_GOR_forest", "Site2_GOR_forest"), layer="GOR")
+    
+    artifact_mfc2 <- rgdal::readOGR(dsn=here("data", "Raw_data", "vector","QGIS_part"), layer="parking_lot")#"C:/Users/sanaz/Documents/MB12-project/QGIS_part/parking_lot.shp"
+    
+    artifact2_mfc2 <- rgdal::readOGR(dsn=here("data", "Raw_data", "vector","QGIS_part"), layer="house")#"C:/Users/sanaz/Documents/MB12-project/QGIS_part/house.shp"
     
     # reproject data
     artifact_mfc2_new <- spTransform(artifact_mfc2, crs(aoi))
@@ -283,7 +284,7 @@ NDWI_dfs_site_year <- function(site, year, ndwi_crop_dir, save_dir, write_dir, s
     
     #Load the select_10m.Rds
     # the following "select_10m" is different for each site
-    select_10m <-readRDS(file = file.path(here("Desktop", "Playground_dir_10", site, year),
+    select_10m <-readRDS(file = file.path(here("data", "Augmented_data", "Playground_dir_10", site, year),
                                           paste0("select10m_", year,"_", toupper(site),".Rds")))
     # select tiles based on select_10m
     ndwi_list_df <- as.data.frame(ndwi_list)
@@ -328,12 +329,11 @@ NDWI_dfs_site_year <- function(site, year, ndwi_crop_dir, save_dir, write_dir, s
     names(ndwi_stack_renamed) <- apply(df_date, 1, char_to_doy)
     
     
-    
-    if(!dir.exists(here("Desktop","Playground_dir_14", "NDWI", toupper(site)))){
-        dir.create(here("Desktop","Playground_dir_14", "NDWI", toupper(site)))
+    if(!dir.exists(here("data", "Augmented_data","Playground_dir_14", "NDWI", toupper(site)))){
+        dir.create(here("data", "Augmented_data","Playground_dir_14", "NDWI", toupper(site)))
     }
-    if(!dir.exists(here("Desktop","Playground_dir_14", "NDWI", toupper(site), "Extracted_dfs"))){
-        dir.create(here("Desktop","Playground_dir_14", "NDWI", toupper(site), "Extracted_dfs"))
+    if(!dir.exists(here("data", "Augmented_data","Playground_dir_14", "NDWI", toupper(site), "Extracted_dfs"))){
+        dir.create(here("data", "Augmented_data","Playground_dir_14", "NDWI", toupper(site), "Extracted_dfs"))
     }
     
     # saveRDS(ndwi_stack_renamed, file.path(save_dir, toupper(site), 
@@ -475,19 +475,19 @@ NDWI_dfs_site_year <- function(site, year, ndwi_crop_dir, save_dir, write_dir, s
 }
 
 # input directory
-ndwi_crop_dir <- here("Desktop", "Playground_dir_15") 
+#ndwi_crop_dir <- here("Results", "Playground_dir_15") 
 
 # save the selected NDWI stack into drive to use in "correlation"
-save_dir <- here("Desktop","Playground_dir_14", "NDWI")
+#save_dir <- here("Results","Playground_dir_14", "NDWI")
 
 # directory for saving NDWI plots of selected tiles and NDWI time series as png files
-write_dir <- here("Desktop","Playground_dir_8", "NDWI")
+#write_dir <- here("Results","Playground_dir_8", "NDWI")
 
 # directory for saving average of NDWI stack over whole study area 
-save_dir_avg <- here("Desktop", "Playground_dir_8", "NDWI","output")
+#save_dir_avg <- here("Results", "Playground_dir_8", "NDWI","output")
 
-
-NDWI_dfs_site_year(site, year, ndwi_crop_dir, save_dir, write_dir, save_dir_avg)
+# invoke the function
+# NDWI_dfs_site_year(site, year, ndwi_crop_dir, save_dir, write_dir, save_dir_avg)
 
 
 

@@ -1,16 +1,15 @@
 
 # This script invokes "Sen2Cor" from R to convert L1C sentinel2 tiles to L2A
-setwd("C:/Users/sanaz/")
-
 
 # path of folder containing "L1C" data
-inFolder <-  here("Desktop", "Playground_dir_16", "L1C_2018")
+#inFolder <-  here("Results", "Playground_dir_16", "L1C_2018")
 
 # path of folder where "L2A" should be saved
-outFolder <-  here("Desktop", "Playground_dir_16", "L2A_2018")
+#outFolder <-  here("Results", "Playground_dir_16", "L2A_2018")
 
 # Insert the path where "Sen2Cor" is installed in computer
-L2A_process_path <-  here("Documents",  "Sen2Cor-02.08.00-win64", "L2A_Process.bat ")
+# L2A_process_path <-  file.path("C:", "Users", "sanaz", 
+#                                "Documents",  "Sen2Cor-02.08.00-win64", "L2A_Process.bat")
 
 
 L1c2L2a<- function(inFolder, L2A_process_path, outFolder){
@@ -38,7 +37,7 @@ L1c2L2a<- function(inFolder, L2A_process_path, outFolder){
     pbapply::pblapply(1:length(l1c_path_list), function(x) { 
                 
                 # create the command structure 
-                cmd <- paste0(L2A_process_path, l1c_path_list[x], " --output_dir ", outFolder)
+                cmd <- paste0(L2A_process_path, " ", l1c_path_list[x], " --output_dir ", outFolder)
                 
                 # execute the command 
                 shell(cmd)

@@ -6,8 +6,6 @@
 # Second is for ploting histogram and time series and saving them 
 ##################
 
-setwd("C:/Users/sanaz/")
-
 # This function calculates NDVI for the specific year and study area & writes them on the drive
 write_NDVI_site_year <- function(path, site, year, ndvi_crop_dir){
   
@@ -24,10 +22,13 @@ write_NDVI_site_year <- function(path, site, year, ndvi_crop_dir){
   
   #2: Load Auxillary data
   ### Define your area of interest (aoi), which is MFC2 (bacino_MFC_corrected) or bounding_box_MFC or else #
-  aoi <- rgdal::readOGR("C:/Users/sanaz/Documents/MB12-project/data/vector/Site1_MFC2_agroforestry/MFC2.shp")
-  aoi_2 <- rgdal::readOGR("C:/Users/sanaz/Documents/MB12-project/data/vector/Site2_GOR_forest/Site2_GOR_forest/GOR.shp")
-  artifact_mfc2 <- rgdal::readOGR("C:/Users/sanaz/Documents/MB12-project/QGIS_part/parking_lot.shp")
-  artifact2_mfc2 <- rgdal::readOGR("C:/Users/sanaz/Documents/MB12-project/QGIS_part/house.shp")
+  aoi <- rgdal::readOGR(dsn=here::here("data", "Raw_data", "vector", "Site1_MFC2_agroforestry"), layer= "MFC2")
+  
+  aoi_2 <- rgdal::readOGR(dsn=here("data", "Raw_data", "vector","Site2_GOR_forest", "Site2_GOR_forest"), layer="GOR")
+  
+  artifact_mfc2 <- rgdal::readOGR(dsn=here("data", "Raw_data", "vector","QGIS_part"), layer="parking_lot")#"C:/Users/sanaz/Documents/MB12-project/QGIS_part/parking_lot.shp"
+  
+  artifact2_mfc2 <- rgdal::readOGR(dsn=here("data", "Raw_data", "vector","QGIS_part"), layer="house")#"C:/Users/sanaz/Documents/MB12-project/QGIS_part/house.shp"
   
   # reproject data
   artifact_mfc2_new <- spTransform(artifact_mfc2,
@@ -99,7 +100,6 @@ write_NDVI_site_year <- function(path, site, year, ndvi_crop_dir){
     }
     
 
-    
     # Export the NDVI raster
     
     name <- names(NDVI_site)
@@ -198,20 +198,19 @@ write_NDVI_site_year <- function(path, site, year, ndvi_crop_dir){
   
 }
 
-library(here)
 
 # input dir
-path <- here("Documents","MB12-project","CREODIAS_part",
-             "data_from_CREODIAS", "L2A_2017_sen2cor")#year_dir
+#path <- here("CREODIAS_part", "data_from_CREODIAS", "L2A_2017_sen2cor")#year_dir
 
 # Change site and year here(parameters)
-site <- "MFC2"#"GOR"  #
-year <- 2017
+#site <- "MFC2"#"GOR"  #
+#year <- 2017
 
 # output dir
-ndvi_crop_dir <- here("Desktop", "Playground_dir_8", "NDVI")
+#ndvi_crop_dir <- here("Results", "Playground_dir_8", "NDVI")
 
-write_NDVI_site_year(path, site, year, ndvi_crop_dir)
+# invoke the function
+#write_NDVI_site_year(path, site, year, ndvi_crop_dir)
 
 
 # Following function converts the character to DOY
@@ -247,13 +246,13 @@ NDVI_plots_site_year <- function(site, year, ndvi_dir, rgb_dir, save_dir, save_d
   
   #2: Load Auxillary data
   ### Define your area of interest (aoi), which is MFC2 (bacino_MFC_corrected) or bounding_box_MFC or else #
-  aoi <- rgdal::readOGR("C:/Users/sanaz/Documents/MB12-project/data/vector/Site1_MFC2_agroforestry/MFC2.shp")
+  aoi <- rgdal::readOGR(dsn=here::here("data", "Raw_data", "vector", "Site1_MFC2_agroforestry"), layer= "MFC2")
   
-  aoi_2 <- rgdal::readOGR("C:/Users/sanaz/Documents/MB12-project/data/vector/Site2_GOR_forest/Site2_GOR_forest/GOR.shp")
+  aoi_2 <- rgdal::readOGR(dsn=here("data", "Raw_data", "vector","Site2_GOR_forest", "Site2_GOR_forest"), layer="GOR")
   
-  artifact_mfc2 <- rgdal::readOGR("C:/Users/sanaz/Documents/MB12-project/QGIS_part/parking_lot.shp")
+  artifact_mfc2 <- rgdal::readOGR(dsn=here("data", "Raw_data", "vector","QGIS_part"), layer="parking_lot")#"C:/Users/sanaz/Documents/MB12-project/QGIS_part/parking_lot.shp"
   
-  artifact2_mfc2 <- rgdal::readOGR("C:/Users/sanaz/Documents/MB12-project/QGIS_part/house.shp")
+  artifact2_mfc2 <- rgdal::readOGR(dsn=here("data", "Raw_data", "vector","QGIS_part"), layer="house")#"C:/Users/sanaz/Documents/MB12-project/QGIS_part/house.shp"
   
   # reproject data
   artifact_mfc2_new <- spTransform(artifact_mfc2,
@@ -280,7 +279,7 @@ NDVI_plots_site_year <- function(site, year, ndvi_dir, rgb_dir, save_dir, save_d
   
   #Load the select_10m.Rds
   # the following "select_10m" is different for each site
-  select_10m <-readRDS(file = file.path(here("Desktop", "Playground_dir_10", site, year),
+  select_10m <-readRDS(file = file.path(here("data", "Augmented_data", "Playground_dir_10", site, year),
                                         paste0("select10m_", year,"_", toupper(site),".Rds")))
   
   
@@ -489,87 +488,6 @@ NDVI_plots_site_year <- function(site, year, ndvi_dir, rgb_dir, save_dir, save_d
   
   dev.off()
   
-  # reset layout
-  #par(mfrow=c(1,1))
-  
-  
-  # View Distribution of Raster Values (Histogram)
-  # ggplot(ndvi_stack_df) +
-  #   geom_histogram(aes(value), stat = "bin", bins = 30) +
-  #   labs(title = sprintf("Distribution of NDVI values_%s_%s", site, as.character(year)))+
-  #   #plot_annotation(
-  #    # title = sprintf("Distribution of NDVI values_%s_%s", site, as.character(year))
-  #    #  ) +
-  #   theme(text = element_text(size = 15),
-  #         aspect.ratio= 12/16)+
-  #   xlab("NDVI") + 
-  #   ylab("Frequency") +
-  #   facet_wrap(~doy)
-  # 
-
-  # ggsave(here(write_dir, paste0(sprintf("histogram_%s", tolower(site)), ".png")), 
-  #        scale = 3, 
-  #        #width = 15, 
-  #        #height = 10,
-  #        dpi = 300
-  #        )
-  
-  # view histogram of data
-  # hist(ndvi_stack[[1]],
-  #      main = "Distribution of NDVI values",
-  #      xlab = "NDVI",
-  #      ylab= "Frequency",
-  #      #col = "wheat",
-  #      xlim = c(0, 1),
-  #      breaks = 30,
-  #      xaxt = 'n')
-  # axis(side=1, at = seq(0,1, 0.05), labels = seq(0,1, 0.05))
-  # 
-  
-  
-  # Names of each histogram needs work !!!!!
-  # x11(width=1000, height=1000)
-  # 
-  # par(mfrow=c(5,5))
-  # 
-  # for (i in c(1:length(rgb_list_selected$rgb_list))){
-  # 
-  #   raster <- ndvi_stack_renamed[[i]]
-  #   hist(raster,
-  #        #main = "Distribution of NDVI values",
-  #        xlab = "NDVI",
-  #        ylab= "Frequency",
-  #        #col = "wheat",
-  #        #axes=TRUE,
-  #        xlim = c(0, 1),
-  #        ylim = c(0,1000)
-  #   )
-  # 
-  #        #,
-  #        #breaks = 30,
-  #        #xaxt = 'n')
-  #   #axis(side=1, at = seq(0,1, 0.05), labels = seq(0,1, 0.05))
-  # 
-  # }
-  
-  
-   # x11()
-   # par(mfrow=c(6,5))
-   # #create histograms of each raster
-   # #This part only draws the first 16 histograms not the whole histograms
-   # hist(ndvi_stack_renamed,
-   #      xlab = "NDVI",
-   #      ylab= "Frequency",
-   #      xlim = c(0, 1))
-   # 
-   # 
-   # ggsave(here(write_dir, paste0(sprintf("histogram_%s", tolower(site)), ".png")),
-   #        scale = 3,
-   #        #width = 15,
-   #        #height = 10,
-   #        dpi = 300
-   #        )
-  
   # calculate mean NDVI for each raster
   avg_NDVI_stack <- cellStats(ndvi_stack, mean)
   
@@ -638,15 +556,15 @@ NDVI_plots_site_year <- function(site, year, ndvi_dir, rgb_dir, save_dir, save_d
 
 
 # input directory for the "NDVI_plots_site_year" function
-ndvi_dir <- here("Desktop","Playground_dir_8", "NDVI")
+#ndvi_dir <- here("Results","Playground_dir_8", "NDVI")
 
 # base input rgb directory
-rgb_dir <- here("Desktop", "Playground_dir_10")
+#rgb_dir <- here("Results", "Playground_dir_10")
 
 # directory for saving the selected NDVI stack into drive to use in "correlation"
-save_dir <- here("Desktop","Playground_dir_14", "NDVI")
+#save_dir <- here("Results","Playground_dir_14", "NDVI")
 
 # Save the avearge NDVI dataframe to drive (will be used in "17_Correlation_NDWI_with_NDVI.R")
-save_dir_avg <- here("Desktop", "Playground_dir_8", "NDVI", "output")
+#save_dir_avg <- here("Results", "Playground_dir_8", "NDVI", "output")
 
-NDVI_plots_site_year(site, year, ndvi_dir, rgb_dir, save_dir, save_dir_avg)
+#NDVI_plots_site_year(site, year, ndvi_dir, rgb_dir, save_dir, save_dir_avg)

@@ -1,8 +1,6 @@
 
 # This code is the function format of "15_Correlation_TAs_with_NDVI.R"
 
-setwd("C:/Users/sanaz/")
-
 #1: Load R packages
 ## Install & load packages
 pck <- (c("tidyr","rgdal","ggplot2","raster","leaflet",
@@ -17,13 +15,13 @@ if(length(new_pck)){install.packages(new_pck)}
 sapply(pck , require, character.only=TRUE)
 
 #read in a self defined function 
-source(here("Documents", "MB12-project", "scripts", "R_scripts", "rename_S2.R"))
+source(here("scripts", "R_scripts", "rename_S2.R"))
 
 #2: Load Auxillary data
 ### Define your area of interest (aoi), which is MFC2 (bacino_MFC_corrected) or bounding_box_MFC or else #
-aoi <- rgdal::readOGR(dsn=here::here("Documents", "MB12-project", "data", "vector", "Site1_MFC2_agroforestry"), layer= "MFC2")
-aoi_2 <- rgdal::readOGR(dsn=here("Documents", "MB12-project", "data", "vector","Site2_GOR_forest", "Site2_GOR_forest"), layer="GOR")
+aoi <- rgdal::readOGR(dsn=here::here("data", "Raw_data", "vector", "Site1_MFC2_agroforestry"), layer= "MFC2")
 
+aoi_2 <- rgdal::readOGR(dsn=here("data", "Raw_data", "vector","Site2_GOR_forest", "Site2_GOR_forest"), layer="GOR")
 
 
 # the function recieves the x (X32 or X267 or ... )  and decides if the layer is 
@@ -236,76 +234,76 @@ corr_ta_vi <- function(vi, site, vi_dir, dir_ta, out_dir) {
 
 
 #VI input directory
-vi_dir <- here("Desktop","Playground_dir_14")
+#vi_dir <- here("Results","Playground_dir_14")
 
 # For github repo:
 #vi_dir <- "data"/"extracted_dfs"/
 
 
 #TA input dir
-dir_ta <- here("Documents", "MB12-project", "data",
-             "Gridded_topographic_attributes")
+#dir_ta <- here("data", "Gridded_topographic_attributes")
 
 # For github repo:
 #dir_ta <- "data"/"Gridded_topographic_attributes"/
 
 # output dir
-out_dir <- here(vi_dir, "output")
+#out_dir <- here(vi_dir, "output")
 
-corr_ta_vi(vi="NDWI", site="GOR", vi_dir = vi_dir, dir_ta = dir_ta, out_dir = out_dir)
+# invoke the function
+#corr_ta_vi(vi="NDWI", site="GOR", vi_dir = vi_dir, dir_ta = dir_ta, out_dir = out_dir)
 
 
 # Visualization of correlation Matrix(using corrplot())
 
-cor_matrix_dir <- here(vi_dir, "output")
+#cor_matrix_dir <- here(vi_dir, "output")
 
 # Finds the full path of correlation matrixes containing the specified study site name
-cor_matrix_names <- list.files(cor_matrix_dir,
-                               pattern = sprintf("*%s*.csv", site),
-                               full.names = TRUE)
+# cor_matrix_names <- list.files(cor_matrix_dir,
+#                                pattern = sprintf("*%s*.csv", site),
+#                                full.names = TRUE)
 
 # Create the correlation plots and writes them as pdf
-if(length(cor_matrix_names)){cor_matrix <- pbapply::pblapply(1:length(cor_matrix_names), 
-                                                        function(x){
-                                                          # import the .csv matrixes into R(Be aware that read.csv() output is in dataframe class)
-                                                          dec = "."    
-                                                          df <- read.csv(cor_matrix_names[x], dec=dec, 
-                                                                         header = TRUE, stringsAsFactors=FALSE)
-                                                          
-                                                          # convert "character" to "numeric" in dataframe
-                                                          cols.num <- colnames(df)[2:11]
-                                                          
-                                                          df[cols.num] <- sapply(df[cols.num], as.numeric)
-                                                          
-                                                          # convert df to matrix (needed for corrplot() function)
-                                                          my_mat <- apply(as.matrix.noquote(df),  # Using apply function
-                                                                          2,
-                                                                          as.numeric)
-                                                          
-                                                          # Give the names of columns to rows
-                                                          rownames(my_mat) <- colnames(my_mat)[2:11]
-                                                          
-                                                          pdf(file = file.path(cor_matrix_dir, 
-                                                                               paste0(strsplit(basename(cor_matrix_names[x]), ".csv"), "_Corrplot.pdf")),
-                                                              width = 10,
-                                                              height = 10)
-                                                          
-                                                          corrplot::corrplot(my_mat[1:10,2:11], 
-                                                                             method = "square",
-                                                                             type="upper",
-                                                                             title= sprintf("%s correlation plot", site),
-                                                                             addCoef.col = "black", # Add coefficient of correlation
-                                                                             # Combine with significance
-                                                                             sig.level = 0.05, insig = "blank", 
-                                                                             #diag=FALSE,
-                                                                             # hide correlation coefficient on the principal diagonal
-                                                                             mar=c(0,0,1,0) # http://stackoverflow.com/a/14754408/54964)
-                                                          )
-                                                          
-                                                          dev.off()
-                                                          
-                                                        })
-}
+# if(length(cor_matrix_names)){cor_matrix <- pbapply::pblapply(1:length(cor_matrix_names), 
+#                                                         function(x){
+#                                                           # import the .csv matrixes into R(Be aware that read.csv() output is in dataframe class)
+#                                                           dec = "."    
+#                                                           df <- read.csv(cor_matrix_names[x], dec=dec, 
+#                                                                          header = TRUE, stringsAsFactors=FALSE)
+#                                                           
+#                                                           # convert "character" to "numeric" in dataframe
+#                                                           cols.num <- colnames(df)[2:11]
+#                                                           
+#                                                           df[cols.num] <- sapply(df[cols.num], as.numeric)
+#                                                           
+#                                                           # convert df to matrix (needed for corrplot() function)
+#                                                           my_mat <- apply(as.matrix.noquote(df),  # Using apply function
+#                                                                           2,
+#                                                                           as.numeric)
+#                                                           
+#                                                           # Give the names of columns to rows
+#                                                           rownames(my_mat) <- colnames(my_mat)[2:11]
+#                                                           
+#                                                           pdf(file = file.path(cor_matrix_dir, 
+#                                                                                paste0(strsplit(basename(cor_matrix_names[x]), ".csv"), "_Corrplot.pdf")),
+#                                                               width = 10,
+#                                                               height = 10)
+#                                                           
+#                                                           corrplot::corrplot(my_mat[1:10,2:11], 
+#                                                                              method = "square",
+#                                                                              type="upper",
+#                                                                              title= sprintf("%s correlation plot", site),
+#                                                                              addCoef.col = "black", # Add coefficient of correlation
+#                                                                              # Combine with significance
+#                                                                              sig.level = 0.05, insig = "blank", 
+#                                                                              #diag=FALSE,
+#                                                                              # hide correlation coefficient on the principal diagonal
+#                                                                              mar=c(0,0,1,0) # http://stackoverflow.com/a/14754408/54964)
+#                                                           )
+#                                                           
+#                                                           dev.off()
+#                                                           
+#                                                         })
+# }
 
 
 

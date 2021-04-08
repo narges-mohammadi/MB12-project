@@ -5,7 +5,7 @@
 ###################################################
 
 #set working directory
-setwd("C:/Users/sanaz/")
+
 pck <- (c("tidyr","rgdal","ggplot2","raster","leaflet",
           "rasterVis","gridExtra","RColorBrewer","plotly",
           "RStoolbox","sp","IRdisplay","reshape","here", 
