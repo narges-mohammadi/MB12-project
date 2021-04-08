@@ -10,4 +10,4 @@
 * [ggplot2](https://github.com/tidyverse/ggplot2), [lattice](https://github.com/cran/lattice), [rasterVis](https://github.com/oscarperpinan/rastervis), [RColorBrewer](https://github.com/cran/RColorBrewer), [RStoolbox](https://github.com/bleutner/RStoolbox), [ggpubr](https://github.com/kassambara/ggpubr), [corrplot](https://github.com/taiyun/corrplot)
  
 
-[For more details of the study sites visit European Geosciences Union (EGU) website](https://blogs.egu.eu/divisions/hs/2020/12/02/featured-catchment-the-alento-hydrological-observatory-in-the-middle-of-the-mediterranean-region/?fbclid=IwAR2ZeiDsMvgiA-mFSMGo7fuptGc7FwzszJSLg3NHTVzhsJCWHmu4mBBiwtI)
+[For more details about the study sites visit European Geosciences Union (EGU) website](https://blogs.egu.eu/divisions/hs/2020/12/02/featured-catchment-the-alento-hydrological-observatory-in-the-middle-of-the-mediterranean-region/?fbclid=IwAR2ZeiDsMvgiA-mFSMGo7fuptGc7FwzszJSLg3NHTVzhsJCWHmu4mBBiwtI)
