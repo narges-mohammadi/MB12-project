@@ -96,11 +96,6 @@ list_ndwi_df <- pbapply::pblapply(1:length(site_list), function(x) pbapply::pbla
 
 # A plot showing ndvi of GOR site during four years & precipitaion in the same site and year
 
-# change the column name from "DOY" to "doy"
-#names(gor1_meteo_df$DOY) <- "doy"
-#names(mfc2_meteo_df[8]) <- "doy"
-
-
 # change the name of column "DOY" to "doy"
 meteo_mfc2_df <- as.data.frame(list_meteo_df[[1]])
 names(meteo_mfc2_df)[8] <- "doy"
@@ -111,7 +106,6 @@ names(meteo_gor_df)[8] <- "doy"
 meteo_mfc2_df <- subset(meteo_mfc2_df, meteo_mfc2_df$Year >= 2017 &  meteo_mfc2_df$Year <= 2020)
 
 meteo_gor_df <- subset(meteo_gor_df, meteo_gor_df$Year >= 2017 &  meteo_gor_df$Year <= 2020)
-
 
 
 # create list of two dataframes
@@ -251,7 +245,6 @@ df_gor_four_yrs <- read.csv(here::here("data","Augmented_data", "Playground_dir_
 # create list of dfs
 list_df_four_yrs <- list(df_mfc2_four_yrs, df_gor_four_yrs)
 
-
 if(!dir.exists(here("data","Augmented_data", "Playground_dir_11", "tables"))){
     dir.create(here("data","Augmented_data", "Playground_dir_11", "tables"))
 }
@@ -300,7 +293,6 @@ summary(table_two,
 )
 
 
-
 # MFC2
 my_controls <- arsenal::tableby.control(
     test = T,
@@ -345,9 +337,7 @@ summary(table_two,
 # gor1_dem_df <- readRDS(file=file.path(input_dir, "GOR", "Extracted_dfs", "gor1_dem_df"))
 
 
-
 plot_dir <- here("data","Augmented_data","Playground_dir_11", "plots")
-
 
 # Scatter plot with correlation coefficient
 #:::::::::::::::::::::::::::::::::::::::::::::::::
@@ -412,9 +402,6 @@ pbapply::pblapply(1:length(list_parameter), function(x) pbapply::pblapply(1:leng
                                                                                                                                       dpi = 300);
                                                                                                                            }
 )))
-
-
-
 
 
 
@@ -593,11 +580,6 @@ write.table(df_gor_four_yrs,
 library(ggpubr)
 
 
-list_df_four_yrs[[1]]
-
-
-
-# 
 # # Group by hydrological seasons and correlation
 # # Meteoparam vs. mean NDVI
 # 
@@ -638,7 +620,6 @@ list_df_four_yrs[[1]]
 
 
 
-
 # plot the correlation plot of dataframes 
 ggpairs(data %>% select(ET0_mm, Prec_mm, meanNDVI), #df_mfc2_four_yrs
         title = site)#
@@ -648,7 +629,6 @@ ggsave(here(plot_dir, paste0(sprintf("evapo_precip_ndvi_%s_correlation", tolower
        #width = 15, 
        #height = 10,
        dpi = 300)
-
 
 
 # combine two plots 
