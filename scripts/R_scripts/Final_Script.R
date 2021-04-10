@@ -503,3 +503,176 @@ pbapply::pblapply(1:length(site_list), function(x) pbapply::pblapply(1:length(co
                                                                      })
 )
 
+############################################################################
+############################################################################
+###                                                                      ###
+###                              SECTION 13:                             ###
+###   CORRELATION OF VEGETATION INDEXES WITH METEOROLOGICAL PARAMETERS   ###
+###                                                                      ###
+############################################################################
+############################################################################
+
+source(here::here("scripts", "R_scripts","13_correlation_NDVI_NDWI_with_meteo.R"))
+
+write_dir <- here("data", "Augmented_data","Playground_dir_11","output")
+
+# invoke the function 
+create_vi_meteo_dfs(write_dir)
+
+# read in the data 
+df_mfc2_four_yrs <- read.csv(here::here("data","Augmented_data", "Playground_dir_11",
+                                        "output", "df_mfc2_with_Season.csv"))
+
+df_gor_four_yrs <- read.csv(here::here("data","Augmented_data", "Playground_dir_11",
+                                       "output", "df_gor1_with_Season.csv"))
+
+# create list of dfs
+list_df_four_yrs <- list(df_mfc2_four_yrs, df_gor_four_yrs)
+
+if(!dir.exists(here("data","Augmented_data", "Playground_dir_11", "tables"))){
+  dir.create(here("data","Augmented_data", "Playground_dir_11", "tables"))
+}
+if(!dir.exists(here("data","Augmented_data", "Playground_dir_11", "tables", "GOR1"))){
+  dir.create(here("data","Augmented_data", "Playground_dir_11", "tables", "GOR1"))
+}
+if(!dir.exists(here("data","Augmented_data", "Playground_dir_11", "tables", "MFC2"))){
+  dir.create(here("data","Augmented_data", "Playground_dir_11", "tables", "MFC2"))
+}
+
+# "arsenal" package for summary tables
+#GOR1
+my_controls <-  arsenal::tableby.control(
+  test = T,
+  total = T,
+  numeric.test = "anova", 
+  cat.test = "chisq",
+  numeric.stats = c("meansd", "medianq1q3", "range"),
+  cat.stats = c("countpct", "Nmiss2"),
+  stats.labels = list(
+    meansd = "Mean (SD)",
+    medianq1q3 = "Median (Q1, Q3)",
+    range = "Min - Max"
+  )
+)
+
+# NDVI in this dataframe represents 
+# the mean NDVI value for this area of interest on a given day.
+my_labels <- list(
+  T_Celsius = "Temperature (°C)",
+  Prec_mm = "Precipitation (mm)",
+  ET0_mm = "Evapotranspiration (mm)",
+  meanNDVI = "mean NDVI over study area"
+)
+
+df_gor_four_yrs$season_factor <- as.factor(df_gor_four_yrs$season)
+
+table_two <-  arsenal::tableby(season_factor ~ .,
+                               data = df_gor_four_yrs,
+                               control = my_controls
+)
+
+summary(table_two,
+        labelTranslations = my_labels,
+        title = "Summary Statistic of GOR1 Dataframe"
+)
+
+
+# MFC2
+my_controls <- arsenal::tableby.control(
+  test = T,
+  total = T,
+  numeric.test = "anova", 
+  cat.test = "chisq",
+  numeric.stats = c("meansd", "medianq1q3", "range"),
+  cat.stats = c("countpct", "Nmiss2"),
+  stats.labels = list(
+    meansd = "Mean (SD)",
+    medianq1q3 = "Median (Q1, Q3)",
+    range = "Min - Max"
+  )
+)
+
+
+my_labels <- list(
+  T_Celsius = "Temperature (Â°C)",
+  Prec_mm = "Precipitation (mm)",
+  ET0_mm = "Evapotranspiration (mm)",
+  meanNDVI = "mean NDVI over study area"
+)
+
+df_mfc2_four_yrs$season_factor <- as.factor(df_mfc2_four_yrs$season)
+
+table_two <-  arsenal::tableby(season_factor ~ .,
+                               data = df_mfc2_four_yrs,
+                               control = my_controls
+)
+
+summary(table_two,
+        labelTranslations = my_labels,
+        title = "Summary Statistic of MFC2 Dataframe"
+)
+
+
+# Scatter plot with correlation coefficient
+plot_dir <- here("data","Augmented_data","Playground_dir_11", "plots")
+
+# Convert "Year" as a grouping variable
+list_df_four_yrs_factorized <- pbapply::pblapply(1:length(site_list), 
+                                                 function(x){
+                                                   list_df_four_yrs[[x]]$Year <- as.character(list_df_four_yrs[[x]]$Year);
+                                                   list_df_four_yrs[[x]]$Year <- factor(list_df_four_yrs[[x]]$Year, levels=c("2017", "2018", "2019", "2020"));
+                                                   return(list_df_four_yrs[[x]])
+                                                   
+                                                 }
+)
+
+
+list_parameter <- list("Temperature", "Precipitation", "Evapotranspiration")
+
+list_method <- list("spearman", "pearson", "kendall")
+
+list_vi <- list("NDVI", "NDWI")
+
+pbapply::pblapply(1:length(list_parameter), function(x) pbapply::pblapply(1:length(list_vi), function(y) pbapply::pblapply(1:length(list_method), 
+                                                                                                                           function(z) {
+                                                                                                                             
+                                                                                                                             if(list_parameter[[x]] == "Temperature") x_axis_name <- "T_Celsius"
+                                                                                                                             
+                                                                                                                             else if(list_parameter[[x]] == "Precipitation") x_axis_name <- "Prec_mm"
+                                                                                                                             
+                                                                                                                             else if(list_parameter[[x]] == "Evapotranspiration") x_axis_name <- "ET0_mm" 
+                                                                                                                             
+                                                                                                                             
+                                                                                                                             sp <- ggscatter(rbind(list_df_four_yrs_factorized[[1]], list_df_four_yrs_factorized[[2]]), 
+                                                                                                                                             x = x_axis_name,#"T_Celsius", 
+                                                                                                                                             y = sprintf("mean%s", list_vi[[y]]),
+                                                                                                                                             parse=TRUE,
+                                                                                                                                             # combine = TRUE, ylab = "NDVI",
+                                                                                                                                             add = "reg.line",  # Add regressin line
+                                                                                                                                             add.params = list(color = "black", fill = "lightgray"), # Customize reg. line
+                                                                                                                                             fullrange= TRUE, 
+                                                                                                                                             color = "Year",
+                                                                                                                                             title = sprintf("%s correlation coefficient & p-value for %s vs. %s", 
+                                                                                                                                                             list_method[[z]], list_parameter[[x]], list_vi[[y]]),
+                                                                                                                                             palette = c("blue", "red", "green","orange"),
+                                                                                                                                             facet.by= "site.x",#"Year",##c("Year", "site.x"),
+                                                                                                                                             xlab = sprintf("%s ", list_parameter[[x]]), 
+                                                                                                                                             ylab = sprintf("%s [-]", list_vi[[y]]), 
+                                                                                                                                             conf.int = FALSE # Add confidence interval
+                                                                                                                             );
+                                                                                                                             
+                                                                                                                             # Add correlation coefficient   
+                                                                                                                             sp + stat_cor(aes(color = Year), label.x = 4 ,
+                                                                                                                                           method = list_method[[z]],
+                                                                                                                                           #label = paste0("R = ", ..r.., ", P = ", ..p..),
+                                                                                                                                           label.x.npc =  'left', 
+                                                                                                                                           label.y.npc = 'bottom');
+                                                                                                                             
+                                                                                                                             ggsave(here(plot_dir, paste0(sprintf("%s_%s_correlation_r_%s_sites_yrs", 
+                                                                                                                                                                  list_parameter[[x]], list_vi[[y]], list_method[[z]]), ".pdf")), #spearman
+                                                                                                                                    scale = 1, 
+                                                                                                                                    width = 10,
+                                                                                                                                    height = 10,
+                                                                                                                                    dpi = 300);
+                                                                                                                           }
+)))
