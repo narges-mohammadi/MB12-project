@@ -5,7 +5,6 @@
 #######################
 
 ### Preparation ############################# 
-setwd("C:/Users/sanaz/")
 
 #1: Load R packages
 ## Install & load packages
@@ -23,17 +22,17 @@ sapply(pck , require, character.only=TRUE)
 ### Creation process of dataframes(meteorological and NDVI) ############################# 
 
 # Read in the meteorological dfs created in "11_Meteo_Params.R"
-site_1 <- "MFC2" 
-read_dir <- here("Desktop","Playground_dir_11","output")
-mfc2_meteo_df <- readRDS(file = file.path(read_dir, 
-                                     paste0("meteorological_df_", site_1)))
 
-site_2 <- "GOR1"
-read_dir <- here("Desktop","Playground_dir_11","output")
-gor1_meteo_df <- readRDS(file = file.path(read_dir, 
-                                          paste0("meteorological_df_", site_2)))
+site_list <- list("MFC2", "GOR")
 
+read_dir <- here("data", "Augmented_data","Playground_dir_11","output")
 
+list_meteo_df <- pbapply::pblapply(1:length(site_list), 
+                                      function(x){
+                                          readRDS(file = file.path(read_dir, 
+                                                                   paste0("meteorological_df_", site_list[[x]])))
+                                      }
+)
 
 # Precipitation bar plot
 # x11()
@@ -60,104 +59,38 @@ gor1_meteo_df <- readRDS(file = file.path(read_dir,
 
 
 
-# define constants
-site2 <- "GOR"
-sites <- list(site_1, site_2)
-
-year1 <- 2017
-year2 <- 2018
-year3 <- 2019
-year4 <- 2020
-years <- list(year1, year2, year3, year4)
+# define a list of years
+year_list <- list(2017, 2018, 2019, 2020)
 
 # created in "9_Cropped_Ndvi_from_Gtiff_Function.R" script
-read_dir_ndvi <-here("Desktop","Playground_dir_8","output") 
+read_dir_ndvi <-here("data", "Augmented_data", "Playground_dir_8", "NDVI", "output") 
 
-ndvi_df_gor_2017 <- readRDS(file = file.path(read_dir_ndvi, 
-                                          paste0("avg_NDVI_stack_", 
-                                                 site2,"_", year1)))
-ndvi_df_gor_2017$year <- year1
-
-ndvi_df_mfc2_2017 <- readRDS(file = file.path(read_dir_ndvi, 
-                                             paste0("avg_NDVI_stack_", 
-                                                    site_1,"_", year1)))
-ndvi_df_mfc2_2017$year <- year1
-
-ndvi_df_gor_2018 <- readRDS(file = file.path(read_dir_ndvi, 
-                                             paste0("avg_NDVI_stack_", 
-                                                    site2,"_", year2)))
-ndvi_df_gor_2018$year <- year2
-
-ndvi_df_mfc2_2018 <- readRDS(file = file.path(read_dir_ndvi, 
-                                              paste0("avg_NDVI_stack_", 
-                                                     site_1,"_", year2)))
-ndvi_df_mfc2_2018$year <- year2
-
-ndvi_df_gor_2019 <- readRDS(file = file.path(read_dir_ndvi, 
-                                             paste0("avg_NDVI_stack_", 
-                                                    site2,"_", year3)))
-ndvi_df_gor_2019$year <- year3
-
-ndvi_df_mfc2_2019 <- readRDS(file = file.path(read_dir_ndvi, 
-                                              paste0("avg_NDVI_stack_", 
-                                                     site_1,"_", year3)))
-ndvi_df_mfc2_2019$year <- year3
-
-ndvi_df_gor_2020 <- readRDS(file = file.path(read_dir_ndvi, 
-                                             paste0("avg_NDVI_stack_", 
-                                                    site2,"_", year4)))
-ndvi_df_gor_2020$year <- year4
-
-ndvi_df_mfc2_2020 <- readRDS(file = file.path(read_dir_ndvi, 
-                                              paste0("avg_NDVI_stack_", 
-                                                     site_1,"_", year4)))
-ndvi_df_mfc2_2020$year <- year4
+list_ndvi_df <- pbapply::pblapply(1:length(site_list), function(x) pbapply::pblapply(1:length(year_list), 
+                                                                     function(y) {
+                                                                         
+                                                                         readRDS(file = file.path(read_dir_ndvi, 
+                                                                                                  paste0("avg_NDVI_stack_", 
+                                                                                                         site_list[[x]],"_",
+                                                                                                         year_list[[y]])))
+                                                                         
+                                                                        
+                                                                     }))
 
 
 
 # NDWI created in "16_NDWI.R"
-read_dir_ndwi <-here("Desktop","Playground_dir_8", "NDWI", "output") 
+read_dir_ndwi <-here("data", "Augmented_data", "Playground_dir_8", "NDWI", "output") 
 
-ndwi_df_gor_2017 <- readRDS(file = file.path(read_dir_ndwi, 
-                                             paste0("avg_NDWI_stack_", 
-                                                    site2,"_", year1)))
-ndwi_df_gor_2017$year <- year1
-
-ndwi_df_mfc2_2017 <- readRDS(file = file.path(read_dir_ndwi, 
-                                              paste0("avg_NDWI_stack_", 
-                                                     site_1,"_", year1)))
-ndwi_df_mfc2_2017$year <- year1
-
-ndwi_df_gor_2018 <- readRDS(file = file.path(read_dir_ndwi, 
-                                             paste0("avg_NDWI_stack_", 
-                                                    site2,"_", year2)))
-ndwi_df_gor_2018$year <- year2
-
-ndwi_df_mfc2_2018 <- readRDS(file = file.path(read_dir_ndwi, 
-                                              paste0("avg_NDWI_stack_", 
-                                                     site_1,"_", year2)))
-ndwi_df_mfc2_2018$year <- year2
-
-ndwi_df_gor_2019 <- readRDS(file = file.path(read_dir_ndwi, 
-                                             paste0("avg_NDWI_stack_", 
-                                                    site2,"_", year3)))
-ndwi_df_gor_2019$year <- year3
-
-ndwi_df_mfc2_2019 <- readRDS(file = file.path(read_dir_ndwi, 
-                                              paste0("avg_NDWI_stack_", 
-                                                     site_1,"_", year3)))
-ndwi_df_mfc2_2019$year <- year3
-
-ndwi_df_gor_2020 <- readRDS(file = file.path(read_dir_ndwi, 
-                                             paste0("avg_NDWI_stack_", 
-                                                    site2,"_", year4)))
-ndwi_df_gor_2020$year <- year4
-
-ndwi_df_mfc2_2020 <- readRDS(file = file.path(read_dir_ndwi, 
-                                              paste0("avg_NDWI_stack_", 
-                                                     site_1,"_", year4)))
-ndwi_df_mfc2_2020$year <- year4
-
+list_ndwi_df <- pbapply::pblapply(1:length(site_list), function(x) pbapply::pblapply(1:length(year_list), 
+                                                                                     function(y) {
+                                                                                         
+                                                                                         readRDS(file = file.path(read_dir_ndwi, 
+                                                                                                                  paste0("avg_NDWI_stack_", 
+                                                                                                                         site_list[[x]],"_",
+                                                                                                                         year_list[[y]])))
+                                                                                         
+                                                                                         
+                                                                                     }))
 
 
 
@@ -167,207 +100,80 @@ ndwi_df_mfc2_2020$year <- year4
 #names(gor1_meteo_df$DOY) <- "doy"
 #names(mfc2_meteo_df[8]) <- "doy"
 
-#GOR
-meteo_gor_df_2017 <- gor1_meteo_df[gor1_meteo_df$Year == 2017,]
-meteo_gor_df_2018 <- gor1_meteo_df[gor1_meteo_df$Year == 2018,]
-meteo_gor_df_2019 <- gor1_meteo_df[gor1_meteo_df$Year == 2019,]
-meteo_gor_df_2020 <- gor1_meteo_df[gor1_meteo_df$Year == 2020,]
-
-#MFC2
-meteo_mfc2_df_2017 <- mfc2_meteo_df[mfc2_meteo_df$Year == 2017,]
-meteo_mfc2_df_2018 <- mfc2_meteo_df[mfc2_meteo_df$Year == 2018,]
-meteo_mfc2_df_2019 <- mfc2_meteo_df[mfc2_meteo_df$Year == 2019,]
-meteo_mfc2_df_2020 <- mfc2_meteo_df[mfc2_meteo_df$Year == 2020,]
-
 
 # change the name of column "DOY" to "doy"
-#GOR
-names(meteo_gor_df_2017)[8] <- "doy"
-names(meteo_gor_df_2018)[8] <- "doy"
-names(meteo_gor_df_2019)[8] <- "doy"
-names(meteo_gor_df_2020)[8] <- "doy" 
+meteo_mfc2_df <- as.data.frame(list_meteo_df[[1]])
+names(meteo_mfc2_df)[8] <- "doy"
 
-#MFC2
-names(meteo_mfc2_df_2017)[8] <- "doy"
-names(meteo_mfc2_df_2018)[8] <- "doy"
-names(meteo_mfc2_df_2019)[8] <- "doy"
-names(meteo_mfc2_df_2020)[8] <- "doy"
+meteo_gor_df <- as.data.frame(list_meteo_df[[2]])
+names(meteo_gor_df)[8] <- "doy"
 
+meteo_mfc2_df <- subset(meteo_mfc2_df, meteo_mfc2_df$Year >= 2017 &  meteo_mfc2_df$Year <= 2020)
 
-#combine meteo dfs from different sites and years
-meteo_df_mfcs_yrs <- rbind(meteo_mfc2_df_2017, meteo_mfc2_df_2018,
-                           meteo_mfc2_df_2019, meteo_mfc2_df_2020)
-
-meteo_df_gor_yrs <- rbind(meteo_gor_df_2017, meteo_gor_df_2018,
-                           meteo_gor_df_2019, meteo_gor_df_2020)
-
-meteo_df_sites_yrs <- rbind(meteo_gor_df_2017, meteo_gor_df_2018,
-                            meteo_gor_df_2019, meteo_gor_df_2020,
-                            meteo_mfc2_df_2017, meteo_mfc2_df_2018,
-                            meteo_mfc2_df_2019, meteo_mfc2_df_2020)
-
-
-# merge 4 dataframes (NDVI and Meteorological)
-list_meteo_gor_df <- list(meteo_gor_df_2017,
-                     meteo_gor_df_2018,
-                     meteo_gor_df_2019,
-                     meteo_gor_df_2020
-                     )
-
-list_ndvi_gor_df <- list(ndvi_df_gor_2017,
-                         ndvi_df_gor_2018,
-                         ndvi_df_gor_2019,
-                         ndvi_df_gor_2020
-                        )
-
-list_ndwi_gor_df <- list(ndwi_df_gor_2017,
-                         ndwi_df_gor_2018,
-                         ndwi_df_gor_2019,
-                         ndwi_df_gor_2020
-)
-
-# for (i in c(1: length(list_meteo_gor_df))){
-#     merged <- merge(list_meteo_gor_df[[i]], list_ndvi_gor_df[[i]], 
-#                                by= "doy",
-#                                all.x= FALSE, 
-#                                all.y= TRUE)
-#     
-#     row.names(merged) <- c(1:(nrow(merged)))
-#     
-#     # subset the merged dataframe so that it has only specific columns
-#     merged_subset <- subset(merged, 
-#                                  select = -c(Month, Day, site.x, date, site.y))
-#     
-# }
-
-# GOR
-# create one dataframe containing two VIs(NDVI & NDWI)
-vi_df_gor_2017 <- cbind(ndvi_df_gor_2017, meanNDWI=ndwi_df_gor_2017$meanNDWI)
-
-#merge vi_df with meteo_df based on the common column("doy")
-merge_df_gor_2017 <- merge(meteo_gor_df_2017, vi_df_gor_2017, 
-                           by= "doy",
-                           all.x= FALSE, 
-                           all.y= TRUE)
-
-row.names(merge_df_gor_2017) <- c(1:(nrow(merge_df_gor_2017)))
-
- 
-vi_df_gor_2018 <- cbind(ndvi_df_gor_2018, meanNDWI=ndwi_df_gor_2018$meanNDWI)
-
-merge_df_gor_2018 <- merge(meteo_gor_df_2018, vi_df_gor_2018,
-                           by= "doy",
-                           all=FALSE
-                           #all.x= FALSE,
-                           #all.y= TRUE
-                           )
-
-row.names(merge_df_gor_2018) <- c((nrow(merge_df_gor_2017) + 1): (nrow(merge_df_gor_2017) + nrow(merge_df_gor_2018)))
-
-
-vi_df_gor_2019 <- cbind(ndvi_df_gor_2019, meanNDWI=ndwi_df_gor_2019$meanNDWI)
-
-merge_df_gor_2019 <- merge(meteo_gor_df_2019, vi_df_gor_2019, 
-                   by= "doy",
-                   all.x= FALSE, 
-                   all.y= TRUE)
-row.names(merge_df_gor_2019) <- c((nrow(merge_df_gor_2018) + 1): (nrow(merge_df_gor_2018) + nrow(merge_df_gor_2019)))
-
-
-vi_df_gor_2020 <- cbind(ndvi_df_gor_2020, meanNDWI=ndwi_df_gor_2020$meanNDWI)
-
-merge_df_gor_2020 <- merge(meteo_gor_df_2020, vi_df_gor_2020, 
-                           by= "doy",
-                           all.x= FALSE, 
-                           all.y= TRUE)
-row.names(merge_df_gor_2020) <- c((nrow(merge_df_gor_2019) + 1): (nrow(merge_df_gor_2019) + nrow(merge_df_gor_2020)))
+meteo_gor_df <- subset(meteo_gor_df, meteo_gor_df$Year >= 2017 &  meteo_gor_df$Year <= 2020)
 
 
 
-
-# MFC2
-vi_df_mfc2_2017 <- cbind(ndvi_df_mfc2_2017, meanNDWI=ndwi_df_mfc2_2017$meanNDWI)
-
-merge_df_mfc2_2017 <- merge(meteo_mfc2_df_2017, vi_df_mfc2_2017, 
-                           by= "doy",
-                           all.x= FALSE, 
-                           all.y= TRUE)
-
-row.names(merge_df_mfc2_2017) <- c(1:(nrow(merge_df_mfc2_2017)))
+# create list of two dataframes
+meteo_df_sites_yrs <- list(meteo_mfc2_df, meteo_gor_df)
 
 
-vi_df_mfc2_2018 <- cbind(ndvi_df_mfc2_2018, meanNDWI=ndwi_df_mfc2_2018$meanNDWI)
+# add the "meanNDWI" column to dataframe
+list_vi_df <- pbapply::pblapply(1:length(site_list), function(x) pbapply::pblapply(1:length(year_list), 
+                                                                                     function(y) {
+                                                                                         
+                                                                                         cbind(list_ndvi_df[[x]][[y]], 
+                                                                                               meanNDWI=list_ndwi_df[[x]][[y]]$meanNDWI)
+                                                                                         
+                                                                                         
+                                                                                     }))
+# merge dataframes (NDVI and Meteorological)
+list_df_merge <- pbapply::pblapply(1:length(site_list), function(x) pbapply::pblapply(1:length(year_list), 
+                                                                                   function(y) {
+                                                                                       
+                                                                                       na.omit(
+                                                                                           merge(meteo_df_sites_yrs[[x]][meteo_df_sites_yrs[[x]]$Year == year_list[[y]],], 
+                                                                                             list_vi_df[[x]][[y]], 
+                                                                                             by= "doy",
+                                                                                             all.x= FALSE, 
+                                                                                             all.y= TRUE)
+                                                                                           )
+                                                                                       
+                                                                                       
+                                                                                   }))
 
-merge_df_mfc2_2018 <- merge(meteo_mfc2_df_2018, vi_df_mfc2_2018, 
-                           by= "doy",
-                           all.x= FALSE, 
-                           all.y= TRUE)
-
-row.names(merge_df_mfc2_2018) <- c((nrow(merge_df_mfc2_2017) + 1): (nrow(merge_df_mfc2_2017) + nrow(merge_df_mfc2_2018)))
-
-vi_df_mfc2_2019 <- cbind(ndvi_df_mfc2_2019, meanNDWI=ndwi_df_mfc2_2019$meanNDWI)
-
-merge_df_mfc2_2019 <- merge(meteo_mfc2_df_2019, vi_df_mfc2_2019, 
-                           by= "doy",
-                           all=FALSE,
-                           #all.x= FALSE, 
-                           #all.y= TRUE
-                           )
-row.names(merge_df_mfc2_2019) <- c((nrow(merge_df_mfc2_2018) + 1): (nrow(merge_df_mfc2_2018) + nrow(merge_df_mfc2_2019)))
-
-
-
-vi_df_mfc2_2019 <- cbind(ndvi_df_mfc2_2020, meanNDWI=ndwi_df_mfc2_2020$meanNDWI)
-
-merge_df_mfc2_2020 <- merge(meteo_mfc2_df_2020, vi_df_mfc2_2019, 
-                           by= "doy",
-                           all.x= FALSE, 
-                           all.y= TRUE)
-row.names(merge_df_mfc2_2020) <- c((nrow(merge_df_mfc2_2019) + 1): (nrow(merge_df_mfc2_2019) + nrow(merge_df_mfc2_2020)))
 
 
 # Writing dataframe data to text file
-write_dir <- here("Desktop","Playground_dir_11","output")
+write_dir <- here("data", "Augmented_data","Playground_dir_11","output")
 
-# write the combined dataframes(NDVI and meteo) to drive
-# this part needs work so that it can work on the list; 
-# the function works fine for just one dataframe ; make it so that it can work on a group of dataframes
-list_of_dfs <- list(merge_df_gor_2017, 
-               merge_df_gor_2018, 
-               merge_df_gor_2019, 
-               merge_df_gor_2020,
-               merge_df_mfc2_2017, 
-               merge_df_mfc2_2018, 
-               merge_df_mfc2_2019, 
-               merge_df_mfc2_2020)
+# Write the combined dataframes(NDVI and meteo) to drive
 
-#subset the each dataframe in the list to contain specific columns(this one shou)
-list_subsetted_dfs <- lapply(list_of_dfs, subset, select = -c(Month, Day, date, site.y))
-
-names_list_subsetted_dfs <- c("merge_df_gor_2017", 
-                   "merge_df_gor_2018", 
-                   "merge_df_gor_2019", 
-                   "merge_df_gor_2020",
-                   "merge_df_mfc2_2017", 
-                   "merge_df_mfc2_2018", 
-                   "merge_df_mfc2_2019", 
-                   "merge_df_mfc2_2020")
+# Subset the each dataframe in the list to contain specific columns
+list_subsetted_dfs <- pbapply::pblapply(1:length(site_list), function(x) pbapply::pblapply(1:length(year_list), 
+                                                                                      function(y) {
+                                                                                          
+                                                                                         subset(list_df_merge[[x]][[y]], 
+                                                                                                select = -c(Month, Day, date, site.y))
+                                                                                          
+                                                                                      }))
 
 
+# write to drive
+m <- pbapply::pblapply(1:length(site_list), function(x) pbapply::pblapply(1:length(year_list), 
+                                                                     function(y) {
+                                                                         
+                                                                         df <- list_subsetted_dfs[[x]][[y]];
+                                                                        
+                                                                         write.table(df,
+                                                                                     file = file.path(write_dir,
+                                                                                                      paste0("merge_df_", df$site.x[1] , "_", df$Year[1], ".txt")),
+                                                                                                sep = "\t",
+                                                                                                row.names = TRUE,
+                                                                                                col.names = NA)
+                                                                         
+                                                                     }))
 
-# this function writes the dataframe(x) into drive
-write <- function(x){write.table(x, file = file.path(write_dir, paste0(deparse(substitute(x)),".txt")), sep = "\t", row.names = TRUE, col.names = NA)}
-
-
-# this function gets dataframe as "x" and name of the file as "y"
-write_2 <- function(x,y){write.table(x, file = file.path(write_dir, paste0(y,".txt")), sep = "\t", row.names = TRUE, col.names = NA)}
-
-
-# this loop executes the "write_2" function on all years and sites
-for (i in c(1: length(list_subsetted_dfs))){
-    print(names_list_subsetted_dfs[i])
-    write_2(list_subsetted_dfs[i], names_list_subsetted_dfs[i])
-}
 
 
 ### Start point: Read in the previously created dataframes ############################# 
@@ -375,106 +181,21 @@ for (i in c(1: length(list_subsetted_dfs))){
 # you have to execute "Creation process of dataframes(meteorological and NDVI)" section above, otherwise 
 # you can execute following lines to load in .txt files and do the plotting 
 
-write_dir <- here("Desktop", "Playground_dir_11", "output")
+write_dir <- here("data", "Augmented_data", "Playground_dir_11", "output")
 
-# GOR1
-NAMES_1 <- read.table(file = file.path(write_dir,"merge_df_gor_2017.txt")
-                      , nrow = 1, stringsAsFactors = FALSE, sep = "\t")
+site_list_2 <- list("MFC2", "GOR1")# different from "site_list" as it has "GOR1" ;necessary due to the column name
 
-DATA_1 <- read.table(file = file.path(write_dir,"merge_df_gor_2017.txt"), 
-                     skip = 1, stringsAsFactors = FALSE, sep = "\t")
+list_read_dfs <- pbapply::pblapply(1:length(site_list_2), function(x) pbapply::pblapply(1:length(year_list), 
+                                                                          function(y) {
+                                                                              read.table(file = file.path(write_dir,
+                                                                                                          sprintf("merge_df_%s_%s.txt", site_list_2[[x]], year_list[[y]])), 
+                                                                                         header = TRUE,
+                                                                                         stringsAsFactors = FALSE, 
+                                                                                         sep = "\t")  
+                                                                              
+                                                                              
+                                                                          }))
 
-DATA_1 <- DATA_1[, c(1:9, 11)]
-names(DATA_1) <- NAMES_1[, c(1:9, 11)]
-
-
-NAMES_2 <- read.table(file = file.path(write_dir,"merge_df_gor_2018.txt")
-                      , nrow = 1, stringsAsFactors = FALSE, sep = "\t")
-
-DATA_2 <- read.table(file = file.path(write_dir,"merge_df_gor_2018.txt"), 
-                     skip = 1, stringsAsFactors = FALSE, sep = "\t")
-
-DATA_2 <- DATA_2[, c(1:9, 11)]
-names(DATA_2) <- NAMES_2[, c(1:9, 11)]
-
-
-
-NAMES_3 <- read.table(file = file.path(write_dir,"merge_df_gor_2019.txt")
-                      , nrow = 1, stringsAsFactors = FALSE, sep = "\t")
-
-DATA_3 <- read.table(file = file.path(write_dir,"merge_df_gor_2019.txt"), 
-                     skip = 1, stringsAsFactors = FALSE, sep = "\t")
-
-DATA_3 <- DATA_3[, c(1:9, 11)]
-names(DATA_3) <- NAMES_3[, c(1:9, 11)]
-
-NAMES_4 <- read.table(file = file.path(write_dir,"merge_df_gor_2020.txt")
-                      , nrow = 1, stringsAsFactors = FALSE, sep = "\t")
-
-DATA_4 <- read.table(file = file.path(write_dir,"merge_df_gor_2020.txt"), 
-                     skip = 1, stringsAsFactors = FALSE, sep = "\t")
-
-DATA_4 <- DATA_4[, c(1:9, 11)]
-names(DATA_4) <- NAMES_4[, c(1:9, 11)]
-
-
-
-# MFC2
-NAMES_5 <- read.table(file = file.path(write_dir,"merge_df_mfc2_2017.txt")
-                      , nrow = 1, stringsAsFactors = FALSE, sep = "\t")
-
-DATA_5 <- read.table(file = file.path(write_dir,"merge_df_mfc2_2017.txt"), 
-                     skip = 1, stringsAsFactors = FALSE, sep = "\t")
-
-DATA_5 <- DATA_5[, c(1:9, 11)]
-names(DATA_5) <- NAMES_5[, c(1:9, 11)]
-
-
-NAMES_6 <- read.table(file = file.path(write_dir,"merge_df_mfc2_2018.txt")
-                      , nrow = 1, stringsAsFactors = FALSE, sep = "\t")
-
-DATA_6 <- read.table(file = file.path(write_dir,"merge_df_mfc2_2018.txt"), 
-                     skip = 1, stringsAsFactors = FALSE, sep = "\t")
-
-DATA_6 <- DATA_6[, c(1:9, 11)]
-names(DATA_6) <- NAMES_6[, c(1:9, 11)]
-
-
-
-NAMES_7 <- read.table(file = file.path(write_dir,"merge_df_mfc2_2019.txt")
-                      , nrow = 1, stringsAsFactors = FALSE, sep = "\t")
-
-DATA_7 <- read.table(file = file.path(write_dir,"merge_df_mfc2_2019.txt"), 
-                     skip = 1, stringsAsFactors = FALSE, sep = "\t")
-
-DATA_7 <- DATA_7[, c(1:9, 11)]
-names(DATA_7) <- NAMES_7[, c(1:9, 11)]
-
-NAMES_8 <- read.table(file = file.path(write_dir,"merge_df_mfc2_2020.txt")
-                      , nrow = 1, stringsAsFactors = FALSE, sep = "\t")
-
-DATA_8 <- read.table(file = file.path(write_dir,"merge_df_mfc2_2020.txt"), 
-                     skip = 1, stringsAsFactors = FALSE, sep = "\t")
-
-DATA_8 <- DATA_8[, c(1:9, 11)]
-names(DATA_8) <- NAMES_8[, c(1:9, 11)]
-
-
-
-# combine 2017,2018,2019,2020 dfs
-df_gor_four_yrs <- rbind(DATA_1,
-                      DATA_2,
-                      DATA_3,
-                      DATA_4
-                        )
-
-df_mfc2_four_yrs <- rbind( DATA_5,
-                DATA_6,
-                DATA_7,
-                DATA_8
-                    )
-
-df_sites_four_yrs <- rbind(df_gor_four_yrs, df_mfc2_four_yrs)
 
 
 # the function recieves the x (doy)  and decides if the observation is 
@@ -491,41 +212,59 @@ three_season <- function(x){
 }
 
 # add a column to dataframe containing season of rows
-df_sites_four_yrs$season <- mapply(three_season, df_sites_four_yrs$doy) 
-df_gor_four_yrs$season <- mapply(three_season, df_gor_four_yrs$doy)
-df_mfc2_four_yrs$season <- mapply(three_season, df_mfc2_four_yrs$doy)
+list_read_dfs_season_MFC2 <- lapply(list_read_dfs[[1]], 
+                                    function(x) transform(x, season = three_season(doy)))
+
+list_read_dfs_season_GOR <- lapply(list_read_dfs[[2]], 
+                                    function(x) transform(x, season = three_season(doy)))
+
+# create one dataframe that has "season" column for each study site 
+df_mfc2_four_yrs <- rbind(list_read_dfs_season_MFC2[[1]], list_read_dfs_season_MFC2[[2]],
+                          list_read_dfs_season_MFC2[[3]], list_read_dfs_season_MFC2[[4]])
+
+df_gor_four_yrs <- rbind(list_read_dfs_season_GOR[[1]], list_read_dfs_season_GOR[[2]],
+                         list_read_dfs_season_GOR[[3]], list_read_dfs_season_GOR[[4]])
+
+
+# df_sites_four_yrs$season <- mapply(three_season, df_sites_four_yrs$doy) 
+# df_gor_four_yrs$season <- mapply(three_season, df_gor_four_yrs$doy)
+# df_mfc2_four_yrs$season <- mapply(three_season, df_mfc2_four_yrs$doy)
 
 # write the new dataframes with season to drive 
-write.csv(df_gor_four_yrs,
-          here("Desktop", "Playground_dir_11", "output", "df_gor1_with_Season.csv"), 
+write.csv(df_mfc2_four_yrs,
+          here("data","Augmented_data", "Playground_dir_11", "output", "df_mfc2_with_Season.csv"), 
           row.names = FALSE)
 
-write.csv(df_mfc2_four_yrs,
-          here("Desktop", "Playground_dir_11", "output", "df_mfc2_with_Season.csv"), 
+write.csv(df_gor_four_yrs,
+          here("data","Augmented_data", "Playground_dir_11", "output", "df_gor1_with_Season.csv"), 
           row.names = FALSE)
+
 
 # read in the data 
-df_gor_four_yrs <- read.csv(here::here("Desktop", "Playground_dir_11",
-                                       "output", "df_gor1_with_Season.csv"))
-df_mfc2_four_yrs <- read.csv(here::here("Desktop", "Playground_dir_11",
+df_mfc2_four_yrs <- read.csv(here::here("data","Augmented_data", "Playground_dir_11",
                                         "output", "df_mfc2_with_Season.csv"))
 
+df_gor_four_yrs <- read.csv(here::here("data","Augmented_data", "Playground_dir_11",
+                                       "output", "df_gor1_with_Season.csv"))
 
 
+# create list of dfs
+list_df_four_yrs <- list(df_mfc2_four_yrs, df_gor_four_yrs)
 
-if(!dir.exists(here("Desktop", "Playground_dir_11", "tables"))){
-    dir.create(here("Desktop", "Playground_dir_11", "tables"))
+
+if(!dir.exists(here("data","Augmented_data", "Playground_dir_11", "tables"))){
+    dir.create(here("data","Augmented_data", "Playground_dir_11", "tables"))
 }
-if(!dir.exists(here("Desktop", "Playground_dir_11", "tables", "GOR1"))){
-    dir.create(here("Desktop", "Playground_dir_11", "tables", "GOR1"))
+if(!dir.exists(here("data","Augmented_data", "Playground_dir_11", "tables", "GOR1"))){
+    dir.create(here("data","Augmented_data", "Playground_dir_11", "tables", "GOR1"))
 }
-if(!dir.exists(here("Desktop", "Playground_dir_11", "tables", "MFC2"))){
-    dir.create(here("Desktop", "Playground_dir_11", "tables", "MFC2"))
+if(!dir.exists(here("data","Augmented_data", "Playground_dir_11", "tables", "MFC2"))){
+    dir.create(here("data","Augmented_data", "Playground_dir_11", "tables", "MFC2"))
 }
 
-# "arsenal" package
+# "arsenal" package for summary tables
 #GOR1
-my_controls <-  tableby.control(
+my_controls <-  arsenal::tableby.control(
     test = T,
     total = T,
     numeric.test = "anova", 
@@ -549,7 +288,8 @@ my_labels <- list(
 )
 
 df_gor_four_yrs$season_factor <- as.factor(df_gor_four_yrs$season)
-table_two <- tableby(season_factor ~ .,
+
+table_two <-  arsenal::tableby(season_factor ~ .,
                      data = df_gor_four_yrs,
                      control = my_controls
 )
@@ -562,7 +302,7 @@ summary(table_two,
 
 
 # MFC2
-my_controls <-  tableby.control(
+my_controls <- arsenal::tableby.control(
     test = T,
     total = T,
     numeric.test = "anova", 
@@ -585,7 +325,8 @@ my_labels <- list(
 )
 
 df_mfc2_four_yrs$season_factor <- as.factor(df_mfc2_four_yrs$season)
-table_two <- tableby(season_factor ~ .,
+
+table_two <-  arsenal::tableby(season_factor ~ .,
                      data = df_mfc2_four_yrs,
                      control = my_controls
 )
@@ -604,21 +345,128 @@ summary(table_two,
 # gor1_dem_df <- readRDS(file=file.path(input_dir, "GOR", "Extracted_dfs", "gor1_dem_df"))
 
 
+
+plot_dir <- here("data","Augmented_data","Playground_dir_11", "plots")
+
+
+# Scatter plot with correlation coefficient
+#:::::::::::::::::::::::::::::::::::::::::::::::::
+
+list_df_four_yrs[[1]]$Year <- as.character(list_df_four_yrs[[1]]$Year)
+
+# Convert "Year" as a grouping variable
+list_df_four_yrs_factorized <- pbapply::pblapply(1:length(site_list), 
+                                                 function(x){
+                                                     list_df_four_yrs[[x]]$Year <- as.character(list_df_four_yrs[[x]]$Year);
+                                                     list_df_four_yrs[[x]]$Year <- factor(list_df_four_yrs[[x]]$Year, levels=c("2017", "2018", "2019", "2020"));
+                                                     return(list_df_four_yrs[[x]])
+                                                     
+                                                 }
+)
+
+
+list_parameter <- list("Temperature", "Precipitation", "Evapotranspiration")
+list_method <- list("spearman", "pearson", "kendall")
+list_vi <- list("NDVI", "NDWI")
+
+pbapply::pblapply(1:length(list_parameter), function(x) pbapply::pblapply(1:length(list_vi), function(y) pbapply::pblapply(1:length(list_method), 
+                                                                                                                           function(z) {
+                                                                                                                               
+                                                                                                                               if(list_parameter[[x]] == "Temperature") x_axis_name <- "T_Celsius"
+                                                                                                                               
+                                                                                                                               else if(list_parameter[[x]] == "Precipitation") x_axis_name <- "Prec_mm"
+                                                                                                                               
+                                                                                                                               else if(list_parameter[[x]] == "Evapotranspiration") x_axis_name <- "ET0_mm" 
+                                                                                                                               
+                                                                                                                               
+                                                                                                                               sp <- ggscatter(rbind(list_df_four_yrs_factorized[[1]], list_df_four_yrs_factorized[[2]]), 
+                                                                                                                                               x = x_axis_name,#"T_Celsius", 
+                                                                                                                                               y = sprintf("mean%s", list_vi[[y]]),
+                                                                                                                                               parse=TRUE,
+                                                                                                                                               # combine = TRUE, ylab = "NDVI",
+                                                                                                                                               add = "reg.line",  # Add regressin line
+                                                                                                                                               add.params = list(color = "black", fill = "lightgray"), # Customize reg. line
+                                                                                                                                               fullrange= TRUE, 
+                                                                                                                                               color = "Year",
+                                                                                                                                               title = sprintf("%s correlation coefficient & p-value for %s vs. %s", 
+                                                                                                                                                               list_method[[z]], list_parameter[[x]], list_vi[[y]]),
+                                                                                                                                               palette = c("blue", "red", "green","orange"),
+                                                                                                                                               facet.by= "site.x",#"Year",##c("Year", "site.x"),
+                                                                                                                                               xlab = sprintf("%s ", list_parameter[[x]]), 
+                                                                                                                                               ylab = sprintf("%s [-]", list_vi[[y]]), 
+                                                                                                                                               conf.int = FALSE # Add confidence interval
+                                                                                                                               );
+                                                                                                                               
+                                                                                                                               # Add correlation coefficient   
+                                                                                                                               sp + stat_cor(aes(color = Year), label.x = 4 ,
+                                                                                                                                             method = list_method[[z]],
+                                                                                                                                             #label = paste0("R = ", ..r.., ", P = ", ..p..),
+                                                                                                                                             label.x.npc =  'left', 
+                                                                                                                                             label.y.npc = 'bottom');
+                                                                                                                               
+                                                                                                                               ggsave(here(plot_dir, paste0(sprintf("%s_%s_correlation_r_%s_sites_yrs", 
+                                                                                                                                                                    list_parameter[[x]], list_vi[[y]], list_method[[z]]), ".pdf")), #spearman
+                                                                                                                                      scale = 1, 
+                                                                                                                                      width = 10,
+                                                                                                                                      height = 10,
+                                                                                                                                      dpi = 300);
+                                                                                                                           }
+)))
+
+
+
+
+
+
 # NDVI(/NDWI) and Precipitation in four years for each site 
-plot_dir <- here("Desktop","Playground_dir_11", "plots")
+
+# vi_list <- list("NDVI", "NDWI")
+# 
+# pbapply::pblapply(1:length(site_list), function(x) pbapply::pblapply(1:length(vi_list), 
+#                                                                                         function(y) {
+#                                                                                             
+#                                                                                             colname <- sprintf("mean%s", vi_list[[y]])
+#                                                                                             
+#                                                                                             ggplot2::ggplot(meteo_df_sites_yrs[[x]], aes(doy, Prec_mm )) + 
+#                                                                                                 geom_col(data = meteo_df_sites_yrs[[x]], aes(doy, Prec_mm))+
+#                                                                                                 #geom_bar(stat = "identity") + #tells ggplot2 you'll provide the y-values for the barplot, rather than counting the aggregate number of rows for each x value
+#                                                                                                 geom_point(data = list_df_four_yrs[[x]], aes(doy, !!ensym(colname)*100)) + #
+#                                                                                                 geom_line(data = list_df_four_yrs[[x]] , aes(doy, !!ensym(colname)*100)) +#*100
+#                                                                                                 stat_smooth(data = list_df_four_yrs[[x]]  , aes(doy, !!ensym(colname)*100), colour="blue")+#*100
+#                                                                                                 scale_x_continuous(breaks = seq(1, 365, by = 7))+  
+#                                                                                                 scale_y_continuous(breaks = seq(0, 100 , by= 10))+ #for Precipitation; 
+#                                                                                                 scale_y_continuous(sec.axis = sec_axis(~./100, name = sprintf("%s [-]", vi_list[[y]])))+
+#                                                                                                 theme(text = element_text(size = 8),
+#                                                                                                       axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 0.5))+
+#                                                                                                 xlab("doy") + 
+#                                                                                                 ylab("Precipitation [mm]") +
+#                                                                                                 labs(title = sprintf("%s and Precipitaion in %s ", vi_list[[y]], meteo_df_sites_yrs[[1]]$site[1]))+
+#                                                                                                 removeGrid(x = TRUE, y = FALSE)+
+#                                                                                                 #facet_grid(Year~site.x) 
+#                                                                                                 facet_wrap(~Year, ncol = 1)# vars(Year, site.x), ncol = 2  
+#                                                                                             
+#                                                                                             
+#                                                                                             
+#                                                                                             
+#                                                                                             ggsave(here(plot_dir, paste0(sprintf("precipitation_%s_%s_years", vi_list[[y]], tolower(site_list[[x]])), ".pdf")), 
+#                                                                                                    scale = 1, 
+#                                                                                                    dpi = 300)
+#                                                                                             
+#                                                                                         }))
+
 
 x11()
 
 # Change the "site" and "VI "manually here
-site <- "MFC2"#"GOR" #   
-VI <- "NDWI"#"NDVI" #
+site <- "MFC2" #"GOR" #  
+VI <- "NDVI"#"NDWI"# #
 
 if(site=="MFC2"){
-    data1 <- meteo_df_mfcs_yrs
-    data2 <- df_mfc2_four_yrs
+    data1 <- meteo_df_sites_yrs[[1]]
+    data2 <- list_df_four_yrs[[1]]
 } else if(site=="GOR") {
-    data1 <- meteo_df_gor_yrs
-    data2 <- df_gor_four_yrs
+    data1 <- meteo_df_sites_yrs[[2]]
+    data2 <- list_df_four_yrs[[2]]
 }
 if(VI == "NDVI"){
 ggplot(data1, aes(doy, Prec_mm )) + 
@@ -657,6 +505,7 @@ ggplot(data1, aes(doy, Prec_mm )) +
         #facet_grid(Year~site.x) 
         facet_wrap(~Year, ncol = 1)# vars(Year, site.x), ncol = 2  
 }
+
 ggsave(here(plot_dir, paste0(sprintf("precipitation_%s_%s_years", VI, tolower(site)), ".pdf")), 
        scale = 1, 
        #width = 15, 
@@ -720,15 +569,15 @@ ggsave(here(plot_dir, paste0(sprintf("evapotranspiration_%s_%s_years", VI, tolow
        dpi = 300)    
 
 # this gives a fun plot to look at 
-library(GGally)
-#df_ok <- filter(df_mfc2_four_yrs,Prec_mm< 1)
-plot_dir <- here("Desktop","Playground_dir_11", "plots")
-site <- "GOR1"# "MFC2"
-if(site=="MFC2"){
-    data <- df_mfc2_four_yrs
-} else {
-    data <- df_gor_four_yrs
-}
+# library(GGally)
+# #df_ok <- filter(df_mfc2_four_yrs,Prec_mm< 1)
+# plot_dir <- here("Desktop","Playground_dir_11", "plots")
+# site <- "GOR1"# "MFC2"
+# if(site=="MFC2"){
+#     data <- df_mfc2_four_yrs
+# } else {
+#     data <- df_gor_four_yrs
+# }
 
 # here I save the dataframes to send them to Sarah
 write.table(df_mfc2_four_yrs,
@@ -743,253 +592,49 @@ write.table(df_gor_four_yrs,
 # Add Correlation Coefficients with P-values to a Scatter Plot
 library(ggpubr)
 
-# Scatter plot with correlation coefficient
-#:::::::::::::::::::::::::::::::::::::::::::::::::
-df_sites_four_yrs$Year <- as.character(df_sites_four_yrs$Year)
-df_sites_four_yrs$Year <- factor(df_sites_four_yrs$Year, levels = c("2017", "2018", "2019", "2020"))
-# Convert "Year" as a grouping variable
-df_sites_four_yrs$Year <- as.factor(df_sites_four_yrs$Year)
-df_sites_four_yrs$site.x <- as.factor(df_sites_four_yrs$site.x)
 
-df_mfc2_four_yrs$Year <- as.character(df_mfc2_four_yrs$Year)
-df_mfc2_four_yrs$Year <- factor(df_mfc2_four_yrs$Year, levels = c("2017", "2018", "2019", "2020"))
-
-
-# Temperature vs. mean NDVI(/NDWI) for both sites 
-method <- "spearman" # "pearson"
-VI <- "NDWI" #"NDVI" #
-
-if(VI=="NDVI"){
-sp <- ggscatter(df_sites_four_yrs, x = "T_Celsius", 
-                y = "meanNDVI",
-                parse=TRUE,
-               # combine = TRUE, ylab = "NDVI",
-                add = "reg.line",  # Add regressin line
-                add.params = list(color = "black", fill = "lightgray"), # Customize reg. line
-                fullrange= TRUE, 
-                color = "Year",
-                title = sprintf("%s correlation coefficient & p-value for Temp. vs. NDVI", method),
-                palette = c("blue", "red", "green","orange"),
-                facet.by= "site.x",#"Year",##c("Year", "site.x"),
-                xlab = "Temperature [°C]", 
-                ylab = "NDVI[-]", 
-                conf.int = FALSE # Add confidence interval
-) 
-
-# Add correlation coefficient   
-sp+stat_cor(aes(color = Year), label.x = 4 ,
-            method = method,
-            #label = paste0("R = ", ..r.., ", P = ", ..p..),
-            label.x.npc =  'left', 
-            label.y.npc = 'bottom')
-
-ggsave(here(plot_dir, paste0(sprintf("Temp_ndvi_correlation_r_%s_sites_yrs", method), ".pdf")), #spearman
-       scale = 2, 
-       #width = 15, 
-       #height = 10,
-       dpi = 300)
-
-}else if(VI=="NDWI"){
-    sp <- ggscatter(df_sites_four_yrs, x = "T_Celsius", 
-                    y = "meanNDWI",
-                    parse=TRUE,
-                    # combine = TRUE, ylab = "NDVI",
-                    add = "reg.line",  # Add regressin line
-                    add.params = list(color = "black", fill = "lightgray"), # Customize reg. line
-                    fullrange= TRUE, 
-                    color = "Year",
-                    title = sprintf("%s correlation coefficient & p-value for Temp. vs. NDWI", method),
-                    palette = c("blue", "red", "green","orange"),
-                    facet.by= "site.x",#"Year",##c("Year", "site.x"),
-                    xlab = "Temperature [°C]", 
-                    ylab = "NDWI[-]", 
-                    conf.int = FALSE # Add confidence interval
-    ) 
-    
-    # Add correlation coefficient   
-    sp+stat_cor(aes(color = Year), label.x = 4 ,
-                method = method,
-                #label = paste0("R = ", ..r.., ", P = ", ..p..),
-                label.x.npc =  'left', 
-                label.y.npc = 'bottom')
-    
-    ggsave(here(plot_dir, paste0(sprintf("Temp_%s_correlation_r_%s_sites_yrs", tolower(VI), method), ".pdf")), #spearman
-           scale = 2, 
-           #width = 15, 
-           #height = 10,
-           dpi = 300)
-}
-
-
-# scatterplot with another package
-
-# ggplot(df_sites_four_yrs, aes(x = T_Celsius, y = meanNDVI, group = Year)) +
-#     geom_smooth(method="lm")+
-#     geom_point()+
-#     facet_wrap(~site.x)+
-#     ggpmisc::stat_poly_eq(formula = y ~ x, 
-#                  aes(label = paste(..rr.label.., ..p.value.label.., sep = "*`,`~")), 
-#                  parse = TRUE,
-#                  label.x.npc = "right",
-#                  vstep = 0.05) # sets vertical spacing
+list_df_four_yrs[[1]]
 
 
 
-# Evapotranspiration vs. mean NDVI(/NDWI) for both sites
-method <- "pearson" #"spearman" # 
-VI <- "NDWI" #"NDVI" #
-
-if(VI=="NDVI"){
-sp_evap <- ggscatter(df_sites_four_yrs, x = "ET0_mm", y = "meanNDVI",
-                add = "reg.line",  # Add regressin line
-                add.params = list(color = "black", fill = "lightgray"), # Customize reg. line
-                color = "Year",
-                parse=TRUE,
-                palette = c("blue", "red", "green","orange"),
-                facet.by= "site.x",
-                title = sprintf("%s correlation coefficient & p-value for Evapotran. vs. %s", method, VI),
-                xlab = "Evapotranspiration [mm]", 
-                ylab = "NDVI[-]", 
-                conf.int = FALSE # Add confidence interval
-)
-
-# Add correlation coefficient
-sp_evap+stat_cor(aes(color = Year), label.x = 4 ,
-            method = method,
-            #label = paste0("R = ", ..r.., ", P = ", ..p..),
-            label.x.npc =  'left', 
-            label.y.npc = 'top')
-
-ggsave(here(plot_dir, paste0(sprintf("Evapotranspiration_%s_correlation_r_%s_sites_yrs", tolower(VI), method), ".pdf")), 
-       scale = 2, 
-       #width = 15, 
-       #height = 10,
-       dpi = 300)
-}else if(VI=="NDWI"){
-    sp_evap <- ggscatter(df_sites_four_yrs, x = "ET0_mm", y = "meanNDWI",
-                         add = "reg.line",  # Add regressin line
-                         add.params = list(color = "black", fill = "lightgray"), # Customize reg. line
-                         color = "Year",
-                         parse=TRUE,
-                         palette = c("blue", "red", "green","orange"),
-                         facet.by= "site.x",
-                         title = sprintf("%s correlation coefficient & p-value for Evapotran. vs. %s", method, VI),
-                         xlab = "Evapotranspiration [mm]", 
-                         ylab = "NDWI[-]", 
-                         conf.int = FALSE # Add confidence interval
-    )
-    
-    # Add correlation coefficient
-    sp_evap+stat_cor(aes(color = Year), label.x = 4 ,
-                     method = method,
-                     #label = paste0("R = ", ..r.., ", P = ", ..p..),
-                     label.x.npc =  'left', 
-                     label.y.npc = 'top')
-    
-    ggsave(here(plot_dir, paste0(sprintf("Evapotranspiration_%s_correlation_r_%s_sites_yrs", tolower(VI), method), ".pdf")), 
-           scale = 2, 
-           #width = 15, 
-           #height = 10,
-           dpi = 300)  
-}
-
-
-# Precipitation vs. mean NDVI(/NDWI)
-method <- "spearman" #"pearson" 
-VI <- "NDWI" # "NDVI"
-
-if(VI=="NDVI"){
-sp_precip <- ggscatter(df_sites_four_yrs, x = "Prec_mm", y = "meanNDVI",
-                     add = "reg.line",  # Add regressin line
-                     add.params = list(color = "black", fill = "lightgray"), # Customize reg. line
-                     color = "Year",
-                     parse=TRUE,
-                     palette = c("blue", "red", "green","orange"),
-                     facet.by= "site.x",#c("Year", "site.x")
-                     title = sprintf("%s correlation coefficient & p-value for Precipitation vs. %s", method, VI),
-                     xlab = "Precipitation [mm]", 
-                     ylab = "NDVI[-]",
-                     conf.int = FALSE # Add confidence interval
-)
-
-# Add correlation coefficient
-sp_precip + stat_cor(aes(color = Year), label.x = 4 ,
-                     method = method,
-                     #label = paste0("R = ", ..r.., ", P = ", ..p..),
-                     label.x.npc =  'left', 
-                     label.y.npc = 'top')
-
-
-ggsave(here(plot_dir, paste0(sprintf("Precipitation_%s_correlation_r_%s_sites_yrs", tolower(VI), method), ".pdf")), 
-       scale = 2, 
-       #width = 15, 
-       #height = 10,
-       dpi = 300)
-}else if(VI == "NDWI"){
-    sp_precip <- ggscatter(df_sites_four_yrs, x = "Prec_mm", y = "meanNDWI",
-                           add = "reg.line",  # Add regressin line
-                           add.params = list(color = "black", fill = "lightgray"), # Customize reg. line
-                           color = "Year",
-                           parse=TRUE,
-                           palette = c("blue", "red", "green","orange"),
-                           facet.by= "site.x",#c("Year", "site.x")
-                           title = sprintf("%s correlation coefficient & p-value for Precipitation vs. %s", method, VI),
-                           xlab = "Precipitation [mm]", 
-                           ylab = "NDWI[-]",
-                           conf.int = FALSE # Add confidence interval
-    )
-    
-    # Add correlation coefficient
-    sp_precip + stat_cor(aes(color = Year), label.x = 4 ,
-                         method = method,
-                         #label = paste0("R = ", ..r.., ", P = ", ..p..),
-                         label.x.npc =  'left', 
-                         label.y.npc = 'top')
-    
-    
-    ggsave(here(plot_dir, paste0(sprintf("Precipitation_%s_correlation_r_%s_sites_yrs", tolower(VI), method), ".pdf")), 
-           scale = 2, 
-           #width = 15, 
-           #height = 10,
-           dpi = 300)  
-}
-
-# Group by hydrological seasons and correlation
-# Meteoparam vs. mean NDVI
-
-method <- "spearman" #"pearson"
-
-# change the parameter each time in the next line
-meteo_param <- "ET0_mm"  #"Prec_mm" #"T_Celsius"# #  #
-
-#"param_name" is chosen and used in the title of plots & plot names
-if ( meteo_param == "T_Celsius") {
-    param_name <- "Temperature"
-} else if ( meteo_param == "Prec_mm") {
-    param_name <- "Precipitation"
-} else if ( meteo_param == "ET0_mm") {
-    param_name <- "Evapotranspiration"
-} 
-sp_1 <- ggscatter(df_sites_four_yrs, x = meteo_param , y = "meanNDVI",
-                       add = "reg.line",  # Add regressin line
-                       add.params = list(color = "black", fill = "lightgray"), # Customize reg. line
-                       color = "season",
-                       palette = "jco", 
-                       title=sprintf("Seasonal %s correlation coefficient & p-value for %s vs. NDVI", method, param_name),
-                       facet.by= c("site.x","Year"),#, "site.x"
-                       conf.int = FALSE # Add confidence interval
-) 
-
-# Add correlation coefficient
-sp_1 + stat_cor(aes(color = season), show.legend = FALSE, 
-                     method = method, label.x = 3)# label.x is the number of unique values in "season"
-
-
-ggsave(here(plot_dir, paste0(sprintf("Seasonal %s_ndvi_correlation_r_%s_sites_yrs", param_name, method), ".pdf")), 
-       scale = 2, 
-       #width = 15, 
-       #height = 10,
-       dpi = 300)
+# 
+# # Group by hydrological seasons and correlation
+# # Meteoparam vs. mean NDVI
+# 
+# method <- "spearman" #"pearson"
+# 
+# # change the parameter each time in the next line
+# meteo_param <- "ET0_mm"  #"Prec_mm" #"T_Celsius"# #  #
+# 
+# #"param_name" is chosen and used in the title of plots & plot names
+# if ( meteo_param == "T_Celsius") {
+#     param_name <- "Temperature"
+# } else if ( meteo_param == "Prec_mm") {
+#     param_name <- "Precipitation"
+# } else if ( meteo_param == "ET0_mm") {
+#     param_name <- "Evapotranspiration"
+# } 
+# sp_1 <- ggscatter(rbind(list_df_four_yrs_factorized[[1]], list_df_four_yrs_factorized[[2]]) , x = meteo_param , y = "meanNDVI",#df_sites_four_yrs
+#                        add = "reg.line",  # Add regressin line
+#                        add.params = list(color = "black", fill = "lightgray"), # Customize reg. line
+#                        color = "season",
+#                        palette = "jco", 
+#                        title=sprintf("Seasonal %s correlation coefficient & p-value for %s vs. NDVI", method, param_name),
+#                        facet.by= c("site.x","Year"),#, "site.x"
+#                        conf.int = FALSE # Add confidence interval
+# ) 
+# 
+# # Add correlation coefficient
+# sp_1 + stat_cor(aes(color = season), show.legend = FALSE, 
+#                      method = method, label.x = 3)# label.x is the number of unique values in "season"
+# 
+# 
+# ggsave(here(plot_dir, paste0(sprintf("Seasonal %s_ndvi_correlation_r_%s_sites_yrs", param_name, method), ".pdf")), 
+#        scale = 2, 
+#        #width = 15, 
+#        #height = 10,
+#        dpi = 300)
+# 
 
 
 
@@ -1006,8 +651,6 @@ ggsave(here(plot_dir, paste0(sprintf("evapo_precip_ndvi_%s_correlation", tolower
 
 
 
-
-
 # combine two plots 
 # source :https://github.com/tidyverse/ggplot2/wiki/Align-two-plots-on-a-page
 
@@ -1015,7 +658,6 @@ ggsave(here(plot_dir, paste0(sprintf("evapo_precip_ndvi_%s_correlation", tolower
 # subset the merged dataframe so that it has only specific columns
 merge_df_gor_2019_subset <- subset(merge_df_gor_2019, 
                           select = -c(Month, Day, DATE, site.x, year, date, site.y))
-
 
 
 # calculating correlation 
@@ -1043,38 +685,4 @@ res$estimate
 # Use chart.Correlation(): Draw scatter plots
 chart.Correlation(merge_df_gor_2019_subset, 
                   histogram = TRUE, pch = 19)
-
-
-
-
-
-x11()
-ggplot(meteo_gor_df_2019, aes(doy, Prec_mm)) + # , colour = year
-    geom_bar(stat = "identity") + #tells ggplot2 you'll provide the y-values for the barplot, rather than counting the aggregate number of rows for each x value
-    geom_point(data = ndvi_df_gor_2019 , aes(doy, meanNDVI)) +
-    #scale_color_viridis(discrete=FALSE, option = "cividis", direction = -1)+# option="inferno"
-    scale_x_continuous(breaks = seq(1, 365, by = 7))+  
-    #scale_y_continuous(breaks = seq(0, 1, by=0.1))+
-    scale_y_continuous(breaks = seq(0, 40, by=1))+
-    theme(text = element_text(size = 8),
-          axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 0.5))+
-    xlab("DOY") + 
-    #ylab("NDVI [-]") +
-    removeGrid(x = TRUE, y = FALSE)
-
-x11()
-ggplot(meteo_gor_df_2019, aes(x = doy, y =Prec_mm))+
-        geom_bar(stat = "identity")+
-        geom_point(data = ndvi_df_gor_2019 ,aes(x=doy,y = meanNDVI*20))+
-        #geom_smooth(data= DATA_3 , aes(y=meanNDVI, x=doy,y~x), 
-        #             method = "loess", span = 0.4) + 
-        #geom_line(data = ndvi_df_gor_2019, linetype= "dashed") +
-        scale_y_continuous(sec.axis = sec_axis(~./30, name = "NDVI [-]"))+
-        labs(y = "Precipitation [mm]",
-                x = "Day of Year",
-                colour = "Parameter")
-
-
-
-
 
