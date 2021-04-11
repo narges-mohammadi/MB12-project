@@ -85,7 +85,7 @@ download_creodias(username, password, finder_api_url, download_path)
 ###########################################################################
 
 ## Unzip tiles using the unzip_s2_tiles() function in "1_Unzip.R" script
-source(here("scripts", "R_scripts", "1_Unzip.R"))
+source(here("scripts", "R_scripts", "Unzip.R"))
 
 year_list <- list(2017, 2018)
 
