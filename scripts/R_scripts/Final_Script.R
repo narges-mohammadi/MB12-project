@@ -203,7 +203,7 @@ pbapply::pblapply(1:length(year_list_2),
 ############################################################################
 
 # Create RGB files to use in tile selection 
-source(here("scripts", "R_scripts","8_tile_select_site_specific.R"))
+source(here("scripts", "R_scripts","tile_select_site_specific.R"))
 
 # this directory can be changed to any other existing directory(specify where you want the RGBs to be saved)
 rgb_dir <- here("data", "Augmented_data", "Playground_dir_10")
