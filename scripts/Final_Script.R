@@ -555,12 +555,11 @@ list_meteo_factorized <- pbapply::pblapply(1:length(site_list),
 pbapply::pblapply(1:length(site_list), function(x) pbapply::pblapply(1:length(list_parameter), 
                                                                      function(y) {
                                                                        
+                                                                       if(list_parameter[[y]] == "Temperature"){y_axis_name <- "T_Celsius"; metric <- "[°C]"}
                                                                        
-                                                                       if(list_parameter[[y]] == "Temperature") y_axis_name <- "T_Celsius"
+                                                                       else if(list_parameter[[y]] == "Precipitation"){y_axis_name <- "Prec_mm"; metric <- "[mm]"}
                                                                        
-                                                                       else if(list_parameter[[y]] == "Precipitation") y_axis_name <- "Prec_mm"
-                                                                       
-                                                                       else if(list_parameter[[y]] == "Evapotranspiration") y_axis_name <- "ET0_mm" 
+                                                                       else if(list_parameter[[y]] == "Evapotranspiration"){y_axis_name <- "ET0_mm"; metric <- "[mm]"} 
                                                                        
                                                                        ggplot(list_meteo_factorized[[x]], aes_string("DOY", y_axis_name, 
                                                                                                                      colour = "Year")) + 
@@ -571,7 +570,7 @@ pbapply::pblapply(1:length(site_list), function(x) pbapply::pblapply(1:length(li
                                                                          theme(text = element_text(size = 8),
                                                                                axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 0.5))+
                                                                          xlab("DOY") + 
-                                                                         ylab(sprintf("%s ", list_parameter[[y]])) +
+                                                                         ylab(sprintf("%s %s", list_parameter[[y]], metric)) +
                                                                          labs(title = sprintf("%s near %s", 
                                                                                               list_parameter[[y]],
                                                                                               site_list[[x]]))+
@@ -595,10 +594,12 @@ pbapply::pblapply(1:length(site_list), function(x) pbapply::pblapply(1:length(li
 pbapply::pblapply(1:length(site_list), 
                   function(x) pbapply::pblapply(1:length(list_parameter), 
                                                 function(y) {
-                                                  if(list_parameter[[y]] == "Temperature") y_axis_name <- "T_Celsius"
+                                                  if(list_parameter[[y]] == "Temperature") {y_axis_name <- "T_Celsius"; metric <- "[°C]"}
                                                   
                                                   else if(list_parameter[[y]] == "Precipitation"){
-                                                    y_axis_name <- "Prec_mm"; 
+                                                    y_axis_name <- "Prec_mm"
+                                                    
+                                                    metric <- "[mm]"
                                                     
                                                     # to remove outliers from "precipitation" column in the boxplot
                                                     library(dplyr)
@@ -612,12 +613,12 @@ pbapply::pblapply(1:length(site_list),
                                                       mutate(outlier = is_outlier(Prec_mm)) %>% 
                                                       filter(outlier == FALSE) 
                                                   }
-                                                  else if(list_parameter[[y]] == "Evapotranspiration") y_axis_name <- "ET0_mm"
+                                                  else if(list_parameter[[y]] == "Evapotranspiration"){y_axis_name <- "ET0_mm";  metric <- "[mm]"}
                                                   
                                                   
                                                   ggplot(list_meteo_factorized[[x]], aes_string("Month", y_axis_name)) + 
                                                     geom_boxplot()+ #,outlier.shape = NA 
-                                                    ylab(sprintf("%s", list_parameter[[y]])) +
+                                                    ylab(sprintf("%s %s", list_parameter[[y]], metric)) +
                                                     labs(title = paste0(sprintf("Monthly %s near %s",
                                                                                 list_parameter[[y]],
                                                                                 site_list[[x]])," from 2017 to 2020"))+
@@ -665,16 +666,6 @@ df_gor_four_yrs <- read.csv(here::here("data","Augmented_data", "Playground_dir_
 
 # create list of dfs
 list_df_four_yrs <- list(df_mfc2_four_yrs, df_gor_four_yrs)
-
-if(!dir.exists(here("data","Augmented_data", "Playground_dir_11", "tables"))){
-  dir.create(here("data","Augmented_data", "Playground_dir_11", "tables"))
-}
-if(!dir.exists(here("data","Augmented_data", "Playground_dir_11", "tables", "GOR1"))){
-  dir.create(here("data","Augmented_data", "Playground_dir_11", "tables", "GOR1"))
-}
-if(!dir.exists(here("data","Augmented_data", "Playground_dir_11", "tables", "MFC2"))){
-  dir.create(here("data","Augmented_data", "Playground_dir_11", "tables", "MFC2"))
-}
 
 # "arsenal" package for summary tables
 #GOR1
