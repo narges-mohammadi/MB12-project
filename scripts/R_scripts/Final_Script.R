@@ -266,7 +266,7 @@ pbapply::pblapply(1:length(site_list), function(x) pbapply::pblapply(1:length(ye
 ###########################################################################
 
 # Create NDVIs and save to drive
-source(here("scripts", "R_scripts","9_Cropped_Ndvi_from_Gtiff_Function.R"))
+source(here("scripts", "R_scripts","Cropped_Ndvi_from_Gtiff_Function.R"))
 
 # Output directory of NDVI( change to your preferred directory)
 ndvi_crop_dir <- here("data", "Augmented_data", "Playground_dir_8", "NDVI")
