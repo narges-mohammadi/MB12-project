@@ -409,7 +409,7 @@ pbapply::pblapply(1:length(site_list), function(x) pbapply::pblapply(1:length(fu
 ############################################################################
 
 # Correlation 
-source(here::here("scripts", "R_scripts","17_Correlation_TAs_with_VIs.R"))
+source(here::here("scripts", "R_scripts", "Correlation_TAs_with_VIs.R"))
 
 #VI input directory
 vi_dir <- here::here("data", "Augmented_data", "Playground_dir_14")
