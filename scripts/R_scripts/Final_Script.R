@@ -512,7 +512,7 @@ pbapply::pblapply(1:length(site_list), function(x) pbapply::pblapply(1:length(co
 ############################################################################
 ############################################################################
 
-source(here::here("scripts", "R_scripts","13_correlation_NDVI_NDWI_with_meteo.R"))
+source(here::here("scripts", "R_scripts","Correlation_NDVI_NDWI_with_meteo.R"))
 
 write_dir <- here("data", "Augmented_data","Playground_dir_11","output")
 
@@ -633,46 +633,47 @@ list_method <- list("spearman", "pearson", "kendall")
 
 list_vi <- list("NDVI", "NDWI")
 
-pbapply::pblapply(1:length(list_parameter), function(x) pbapply::pblapply(1:length(list_vi), function(y) pbapply::pblapply(1:length(list_method), 
-                                                                                                                           function(z) {
+pbapply::pblapply(1:length(list_parameter), 
+                  function(x) pbapply::pblapply(1:length(list_vi), 
+                                                function(y) pbapply::pblapply(1:length(list_method),
+                                                                              function(z) {
+                                                                                if(list_parameter[[x]] == "Temperature"){x_axis_name <- "T_Celsius"; metric <- "[°C]"}
                                                                                                                              
-                                                                                                                             if(list_parameter[[x]] == "Temperature") x_axis_name <- "T_Celsius"
+                                                                                 else if(list_parameter[[x]] == "Precipitation"){x_axis_name <- "Prec_mm"; metric <- "[mm]"}
                                                                                                                              
-                                                                                                                             else if(list_parameter[[x]] == "Precipitation") x_axis_name <- "Prec_mm"
-                                                                                                                             
-                                                                                                                             else if(list_parameter[[x]] == "Evapotranspiration") x_axis_name <- "ET0_mm" 
+                                                                                 else if(list_parameter[[x]] == "Evapotranspiration"){x_axis_name <- "ET0_mm"; metric <- "[mm]"} 
                                                                                                                              
                                                                                                                              
-                                                                                                                             sp <- ggscatter(rbind(list_df_four_yrs_factorized[[1]], list_df_four_yrs_factorized[[2]]), 
-                                                                                                                                             x = x_axis_name,#"T_Celsius", 
-                                                                                                                                             y = sprintf("mean%s", list_vi[[y]]),
-                                                                                                                                             parse=TRUE,
-                                                                                                                                             # combine = TRUE, ylab = "NDVI",
-                                                                                                                                             add = "reg.line",  # Add regressin line
-                                                                                                                                             add.params = list(color = "black", fill = "lightgray"), # Customize reg. line
-                                                                                                                                             fullrange= TRUE, 
-                                                                                                                                             color = "Year",
-                                                                                                                                             title = sprintf("%s correlation coefficient & p-value for %s vs. %s", 
-                                                                                                                                                             list_method[[z]], list_parameter[[x]], list_vi[[y]]),
-                                                                                                                                             palette = c("blue", "red", "green","orange"),
-                                                                                                                                             facet.by= "site.x",#"Year",##c("Year", "site.x"),
-                                                                                                                                             xlab = sprintf("%s ", list_parameter[[x]]), 
-                                                                                                                                             ylab = sprintf("%s [-]", list_vi[[y]]), 
-                                                                                                                                             conf.int = FALSE # Add confidence interval
+                                                                                 sp <- ggscatter(rbind(list_df_four_yrs_factorized[[1]], list_df_four_yrs_factorized[[2]]),
+                                                                                                 x = x_axis_name,#"T_Celsius", 
+                                                                                                 y = sprintf("mean%s", list_vi[[y]]),
+                                                                                                 parse=TRUE,
+                                                                                                 # combine = TRUE
+                                                                                                 add = "reg.line",  # Add regressin line
+                                                                                                 add.params = list(color = "black", fill = "lightgray"), # Customize reg. line
+                                                                                                 fullrange= TRUE, 
+                                                                                                 color = "Year",
+                                                                                                 title = sprintf("%s correlation coefficient & p-value for %s vs. %s", 
+                                                                                                                 list_method[[z]], list_parameter[[x]], list_vi[[y]]), 
+                                                                                                 palette = c("blue", "red", "green","orange"),
+                                                                                                 facet.by= "site.x",#"Year",##c("Year", "site.x"),
+                                                                                                 xlab = sprintf("%s %s", list_parameter[[x]], metric), 
+                                                                                                 ylab = sprintf("%s [-]", list_vi[[y]]), 
+                                                                                                 conf.int = FALSE # Add confidence interval
                                                                                                                              );
                                                                                                                              
-                                                                                                                             # Add correlation coefficient   
-                                                                                                                             sp + stat_cor(aes(color = Year), label.x = 4 ,
-                                                                                                                                           method = list_method[[z]],
-                                                                                                                                           #label = paste0("R = ", ..r.., ", P = ", ..p..),
-                                                                                                                                           label.x.npc =  'left', 
-                                                                                                                                           label.y.npc = 'bottom');
+                                                                                   # Add correlation coefficient   
+                                                                                   sp + stat_cor(aes(color = Year), label.x = 4 ,
+                                                                                                 method = list_method[[z]],
+                                                                                                 #label = paste0("R = ", ..r.., ", P = ", ..p..),
+                                                                                                 label.x.npc =  'left', 
+                                                                                                 label.y.npc = 'bottom');
                                                                                                                              
-                                                                                                                             ggsave(here(plot_dir, paste0(sprintf("%s_%s_correlation_r_%s_sites_yrs", 
-                                                                                                                                                                  list_parameter[[x]], list_vi[[y]], list_method[[z]]), ".pdf")), #spearman
-                                                                                                                                    scale = 1, 
-                                                                                                                                    width = 10,
-                                                                                                                                    height = 10,
-                                                                                                                                    dpi = 300);
+                                                                                    ggsave(here(plot_dir, paste0(sprintf("%s_%s_correlation_r_%s_sites_yrs", 
+                                                                                                                         list_parameter[[x]], list_vi[[y]], list_method[[z]]), ".pdf")), #spearman
+                                                                                           scale = 1, 
+                                                                                           width = 10,
+                                                                                           height = 10,
+                                                                                           dpi = 300);
                                                                                                                            }
 )))
