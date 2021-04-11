@@ -84,7 +84,7 @@ download_creodias(username, password, finder_api_url, download_path)
 ###########################################################################
 ###########################################################################
 
-## Unzip tiles using the unzip_s2_tiles() function in "1_Unzip.R" script
+## Unzip tiles using the unzip_s2_tiles() function in "Unzip.R" script
 source(here("scripts", "R_scripts", "Unzip.R"))
 
 year_list <- list(2017, 2018)
@@ -170,8 +170,8 @@ L1c2L2a(inFolder, L2A_process_path, outFolder)
 ############################################################################
 ############################################################################
 
-# Convert jp2 to Gtiff using "jp2ToGtif()" in "2_Jp2ToGtiff_Resample.R" script
-source(here("scripts", "R_scripts", "2_Jp2ToGtiff_Resample.R"))
+# Convert jp2 to Gtiff using "jp2ToGtif()" in "Jp2ToGtiff_Resample.R" script
+source(here("scripts", "R_scripts", "Jp2ToGtiff_Resample.R"))
 
 pbapply::pblapply(1:length(year_list), 
                   function(x){
