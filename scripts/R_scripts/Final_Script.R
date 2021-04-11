@@ -338,7 +338,7 @@ pbapply::pblapply(1:length(site_list), function(x) pbapply::pblapply(1:length(fu
 ############################################################################
 
 # Create NDWIs and save to drive
-source(here("scripts", "R_scripts","16_NDWI.R"))
+source(here("scripts", "R_scripts","NDWI.R"))
 
 # Output directory of NDWI( change to your preferred directory)
 ndwi_crop_dir <- here("data", "Augmented_data", "Playground_dir_15")
