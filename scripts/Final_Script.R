@@ -503,10 +503,140 @@ pbapply::pblapply(1:length(site_list), function(x) pbapply::pblapply(1:length(co
                                                                      })
 )
 
+
+###########################################################################
+###########################################################################
+###                                                                     ###
+###                             SECTION 13:                             ###
+###          PRELIMINARY OVERVIEW OF METEOROLOGICAL PARAMETERS          ###
+###                                                                     ###
+###########################################################################
+###########################################################################
+source(here::here("scripts", "R_scripts","Meteo_Params.R"))
+
+# save directory
+save_dir <- here("data", "Augmented_data", "Playground_dir_11", "output")
+
+# invoke function 
+meteo_data_to_df(save_dir)
+
+meteo_MFC2 <- readRDS(file = file.path(save_dir, "meteorological_df_MFC2"
+))
+
+meteo_GOR <- readRDS(file = file.path(save_dir, "meteorological_df_GOR1"
+))
+## Plots 
+list_parameter <- list("Temperature", "Precipitation", "Evapotranspiration")
+site_list <- list("MFC2", "GOR")
+list_meteo <- list(meteo_MFC2, meteo_GOR)
+
+# Convert "Year" as a grouping variable
+list_meteo_factorized <- pbapply::pblapply(1:length(site_list), 
+                                           function(x){
+                                             list_meteo[[x]]$Year <- as.character(list_meteo[[x]]$Year);
+                                             list_meteo[[x]]$Year <- factor(list_meteo[[x]]$Year, levels=c("2017", "2018", "2019", "2020"));
+                                             list_meteo[[x]]$Month <- as.character(list_meteo[[x]]$Month);
+                                             list_meteo[[x]]$Month <- factor(list_meteo[[x]]$Month, levels=c("1", "2", "3", "4", "5", "6",
+                                                                                                             "7", "8", "9", "10", "11", "12"));
+                                             return(list_meteo[[x]])
+                                             
+                                           })
+
+
+pbapply::pblapply(1:length(site_list), function(x) pbapply::pblapply(1:length(list_parameter), 
+                                                                     function(y) {
+                                                                       
+                                                                       
+                                                                       if(list_parameter[[y]] == "Temperature") y_axis_name <- "T_Celsius"
+                                                                       
+                                                                       else if(list_parameter[[y]] == "Precipitation") y_axis_name <- "Prec_mm"
+                                                                       
+                                                                       else if(list_parameter[[y]] == "Evapotranspiration") y_axis_name <- "ET0_mm" 
+                                                                       
+                                                                       ggplot(list_meteo_factorized[[x]], aes_string("DOY", y_axis_name, 
+                                                                                                                     colour = "Year")) + 
+                                                                         geom_line()+
+                                                                         scale_color_viridis(discrete=TRUE, option = "cividis" , direction = -1)+# option="inferno"
+                                                                         scale_x_continuous(breaks = seq(1, 365, by = 7))+  
+                                                                         scale_y_continuous(breaks = seq(0, 100, by = 10))+
+                                                                         theme(text = element_text(size = 8),
+                                                                               axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 0.5))+
+                                                                         xlab("DOY") + 
+                                                                         ylab(sprintf("%s ", list_parameter[[y]])) +
+                                                                         labs(title = sprintf("%s near %s Site", 
+                                                                                              list_parameter[[y]],
+                                                                                              site_list[[x]]))+
+                                                                         ggExtra::removeGrid(x = TRUE, y = FALSE)+
+                                                                         #facet_wrap(~site,ncol = 1)
+                                                                         facet_wrap(~Year, ncol = 1)
+                                                                       
+                                                                       write_dir <- here("data", "Augmented_data", "Playground_dir_11","plots")
+                                                                       
+                                                                       ggsave(here(write_dir, paste0(sprintf("%s_%s", list_parameter[[y]], site_list[[x]]), ".pdf")), 
+                                                                              scale = 1,
+                                                                              width = 10,
+                                                                              height = 10,
+                                                                              dpi = 300
+                                                                       )
+                                                                       
+                                                                     }))
+
+
+# Boxplot
+pbapply::pblapply(1:length(site_list), 
+                  function(x) pbapply::pblapply(1:length(list_parameter), 
+                                                function(y) {
+                                                  if(list_parameter[[y]] == "Temperature") y_axis_name <- "T_Celsius"
+                                                  
+                                                  else if(list_parameter[[y]] == "Precipitation"){
+                                                    y_axis_name <- "Prec_mm"; 
+                                                    
+                                                    # to remove outliers from "precipitation" column in the boxplot
+                                                    library(dplyr)
+                                                    
+                                                    is_outlier <- function(z) {
+                                                      return(z < quantile(z, 0.25) - 1.5 * IQR(z) | z > quantile(z, 0.75) + 1.5 * IQR(z))
+                                                    }
+                                                    
+                                                    list_meteo_factorized[[x]] <- list_meteo_factorized[[x]] %>% 
+                                                      group_by(as.numeric(as.character(Month))) %>% 
+                                                      mutate(outlier = is_outlier(Prec_mm)) %>% 
+                                                      filter(outlier == FALSE) 
+                                                  }
+                                                  else if(list_parameter[[y]] == "Evapotranspiration") y_axis_name <- "ET0_mm"
+                                                  
+                                                  
+                                                  ggplot(list_meteo_factorized[[x]], aes_string("Month", y_axis_name)) + 
+                                                    geom_boxplot()+ #,outlier.shape = NA 
+                                                    ylab(sprintf("%s", list_parameter[[y]])) +
+                                                    labs(title = paste0(sprintf("Monthly %s near %s Site",
+                                                                                list_parameter[[y]],
+                                                                                site_list[[x]])," over years"))+
+                                                    theme(text = element_text(size = 20),
+                                                          aspect.ratio= 12/16)+
+                                                    facet_wrap(~Year, ncol =  1)
+                                                  
+                                                  write_dir <- here("data", "Augmented_data", "Playground_dir_11", "plots")
+                                                  
+                                                  ggsave(here(write_dir, paste0(sprintf("Boxplot_monthly_%s_%s", 
+                                                                                        list_parameter[[y]],
+                                                                                        site_list[[x]]), ".pdf")), 
+                                                         scale = 2,
+                                                         width = 15,
+                                                         height = 20,
+                                                         dpi = 300
+                                                  )
+                                                  
+                                                  
+                                                }))
+
+
+
+
 ############################################################################
 ############################################################################
 ###                                                                      ###
-###                              SECTION 13:                             ###
+###                              SECTION 14:                             ###
 ###   CORRELATION OF VEGETATION INDEXES WITH METEOROLOGICAL PARAMETERS   ###
 ###                                                                      ###
 ############################################################################
