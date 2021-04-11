@@ -2,7 +2,6 @@
 # the only time "setwd()" is being used in the entire project to set the root(project) directory for "here" package
 setwd("C:/Users/sanaz/Documents/MB12-project")
 
-
 library(here)
 library(pbapply)
 
@@ -193,6 +192,7 @@ pbapply::pblapply(1:length(year_list_2),
                   }
 )
 
+
 ############################################################################
 ############################################################################
 ###                                                                      ###
@@ -228,6 +228,7 @@ pbapply::pblapply(1:length(site_list), function(x) pbapply::pblapply(1:length(ye
                                                   write_rgb(path, site_list[[x]][1], year_list_2[[y]][1], rgb_dir)
                                                                      }))
 
+
 ############################################################################
 ############################################################################
 ###                                                                      ###
@@ -255,6 +256,7 @@ pbapply::pblapply(1:length(site_list), function(x) pbapply::pblapply(1:length(ye
                                                                        tile_sel_rgb(site_list[[x]][1], year_list_2[[y]][1], rgb_dir)
                                                                        
                                                                      }))
+
 
 ###########################################################################
 ###########################################################################
@@ -290,6 +292,7 @@ pbapply::pblapply(1:length(site_list), function(x) pbapply::pblapply(1:length(ye
                                                                        write_NDVI_site_year(path, site_list[[x]][1], year_list_2[[y]][1], ndvi_crop_dir)
                                                                        
                                                                      }))
+
 
 ###########################################################################
 ###########################################################################
@@ -328,6 +331,7 @@ pbapply::pblapply(1:length(site_list), function(x) pbapply::pblapply(1:length(fu
                                                                        
                                                                      }))
 
+
 ############################################################################
 ############################################################################
 ###                                                                      ###
@@ -364,6 +368,7 @@ pbapply::pblapply(1:length(site_list), function(x) pbapply::pblapply(1:length(ye
                                                                        
                                                                      }))
 
+
 ###########################################################################
 ###########################################################################
 ###                                                                     ###
@@ -399,6 +404,7 @@ pbapply::pblapply(1:length(site_list), function(x) pbapply::pblapply(1:length(fu
                                                                        
                                                                      }))
 
+
 ############################################################################
 ############################################################################
 ###                                                                      ###
@@ -432,6 +438,7 @@ pbapply::pblapply(1:length(vi_list), function(x) pbapply::pblapply(1:length(site
                                                                                   dir_ta = dir_ta, 
                                                                                   out_dir = out_dir) 
                                                                      }))
+
 
 ############################################################################
 ############################################################################
@@ -512,6 +519,7 @@ pbapply::pblapply(1:length(site_list), function(x) pbapply::pblapply(1:length(co
 ###                                                                     ###
 ###########################################################################
 ###########################################################################
+
 source(here::here("scripts", "R_scripts","Meteo_Params.R"))
 
 # save directory
@@ -525,6 +533,7 @@ meteo_MFC2 <- readRDS(file = file.path(save_dir, "meteorological_df_MFC2"
 
 meteo_GOR <- readRDS(file = file.path(save_dir, "meteorological_df_GOR1"
 ))
+
 ## Plots 
 list_parameter <- list("Temperature", "Precipitation", "Evapotranspiration")
 site_list <- list("MFC2", "GOR")
@@ -563,7 +572,7 @@ pbapply::pblapply(1:length(site_list), function(x) pbapply::pblapply(1:length(li
                                                                                axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 0.5))+
                                                                          xlab("DOY") + 
                                                                          ylab(sprintf("%s ", list_parameter[[y]])) +
-                                                                         labs(title = sprintf("%s near %s Site", 
+                                                                         labs(title = sprintf("%s near %s", 
                                                                                               list_parameter[[y]],
                                                                                               site_list[[x]]))+
                                                                          ggExtra::removeGrid(x = TRUE, y = FALSE)+
@@ -609,9 +618,9 @@ pbapply::pblapply(1:length(site_list),
                                                   ggplot(list_meteo_factorized[[x]], aes_string("Month", y_axis_name)) + 
                                                     geom_boxplot()+ #,outlier.shape = NA 
                                                     ylab(sprintf("%s", list_parameter[[y]])) +
-                                                    labs(title = paste0(sprintf("Monthly %s near %s Site",
+                                                    labs(title = paste0(sprintf("Monthly %s near %s",
                                                                                 list_parameter[[y]],
-                                                                                site_list[[x]])," over years"))+
+                                                                                site_list[[x]])," from 2017 to 2020"))+
                                                     theme(text = element_text(size = 20),
                                                           aspect.ratio= 12/16)+
                                                     facet_wrap(~Year, ncol =  1)
@@ -629,8 +638,6 @@ pbapply::pblapply(1:length(site_list),
                                                   
                                                   
                                                 }))
-
-
 
 
 ############################################################################
