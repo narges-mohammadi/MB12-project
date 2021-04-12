@@ -1,4 +1,11 @@
-﻿Usage of scripts is implemented in "Final_script".
+﻿Usage of scripts is implemented in "Final_script". The topographic attributes were calculated using **DEM**[[1]](#1).
+
+## References
+<a id="1">[1]</a> 
+Paolo Nasta, Mario Palladino, Nadia Ursino, Antonio Saracino, Angelo Sommella, Nunzio Romano (2017). 
+Assessing long-term impact of land-use change on hydrological ecosystem functions in a Mediterranean upland agro-forestry catchment. 
+Science of the Total Environment.
+
 ## List of used packages:
 
 ### Handling
