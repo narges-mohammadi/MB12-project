@@ -1,11 +1,13 @@
 ﻿Usage of scripts is shown in "Final_script". 
-The topographic attributes(TAs) were calculated using **DEM**[[1]](#1) in SAGA. Here is the list of used attributes:
+
+The topographic attributes(TAs) were calculated using **DEM**[[1]](#1) in SAGA. Here is the list of used attributes[[2]](#2):
+
 | TA                              | Description |
 | -----------                     | ----------- |
 | Slope                           | Slope gradient (often referred to as slope) is the angle between the tangent plane and the horizontal plane at a given point of the topographical surface. |
 | Aspect                          | Aspect is a clockwise angle from north to a projection of the external normal to the horizontal plane at a given point of the Earth's surface        |
 | DEM                             | Digital Elevation Model        |
-| Terrain Ruggedness Index (TRI)  | Text        |
+| Terrain Ruggedness Index (TRI)  | ---        |
 | Topographic Wetness Index (TWI) | An indicator for the potential water content and horizon depth of the soil |
 | Profile Curvature               | controls water flow acceleration and deceleration  and the erosion potential of an area       |
 | Plan Curvature                  | A measure of flow convergence (kh < 0) and divergence (kh > 0) and determines soil water or the deposition of particles.        | 
@@ -26,13 +28,13 @@ The two experimental sites (MFC2 and GOR1) are located in the Upper Alento River
 
 ### List of used packages:
 
-#### Handling
+**Handling**
 * [pbapply](https://github.com/psolymos/pbapply), [here](https://github.com/jennybc/here_here), [httr](https://github.com/r-lib/httr)
 
-#### Analysing
+**Analysing**
 * [raster](https://github.com/rspatial/raster), [rgdal](https://github.com/cran/rgdal), [gdalUtils](https://github.com/cran/gdalUtils), [stats](), [arsenal](https://github.com/mayoverse/arsenal), [lubridate](https://github.com/tidyverse/lubridate)
 
-#### Plotting
+**Plotting**
 * [ggplot2](https://github.com/tidyverse/ggplot2), [lattice](https://github.com/cran/lattice), [rasterVis](https://github.com/oscarperpinan/rastervis), [RStoolbox](https://github.com/bleutner/RStoolbox), [ggpubr](https://github.com/kassambara/ggpubr), [corrplot](https://github.com/taiyun/corrplot)
 
 ## References
@@ -40,3 +42,8 @@ The two experimental sites (MFC2 and GOR1) are located in the Upper Alento River
 Paolo Nasta, Mario Palladino, Nadia Ursino, Antonio Saracino, Angelo Sommella, Nunzio Romano (2017).  
 Assessing long-term impact of land-use change on hydrological ecosystem functions in a Mediterranean upland agro-forestry catchment. 
 Science of the Total Environment.
+
+<a id="2">[2]</a> 
+Calogero Schillaci, Andreas Braun and Jan Kropáček (2015).  
+Terrain analysis and landform recognition. 
+British Society for Geomorphology, Geomorphological Techniques, Chap. 2, Sec. 4.2.
