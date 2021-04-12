@@ -1,10 +1,10 @@
-﻿Usage of scripts is shown in "Final_script". Sentinel 2 data is downloaded from CREODIAS
+﻿The use of mini scripts is shown in the "Final_Script" starting from data downloading to visualization.
 
 The topographic attributes (TAs) were calculated using **DEM** [[1]](#1) in SAGA. Here is the list of used attributes [[2]](#2):
 
 | TA                              | Description |
 | -----------                     | ----------- |
-| Slope                           | Slope gradient (often referred to as slope) is the angle between the tangent plane and the horizontal plane at a given point of the topographical surface. |
+| Slope                           | Slope is the angle between the tangent plane and the horizontal plane at a given point of the topographical surface. |
 | Aspect                          | Aspect is a clockwise angle from north to a projection of the external normal to the horizontal plane at a given point of the Earth's surface        |
 | DEM                             | Digital Elevation Model        |
 | Terrain Ruggedness Index (TRI)  | Terrain ruggedness (roughness) is defined as the variability or irregularity in elevation (highs and lows) within a sampled terrain unit.      |
@@ -13,7 +13,7 @@ The topographic attributes (TAs) were calculated using **DEM** [[1]](#1) in SAGA
 | Plan Curvature                  | Plan Curvature is the horizontal curvature, intersecting with the XY plane.        | 
 | AAC                             | ---        |
 
-Meteorological measurements including temperature, precipitation and evapotranspiration were also provided by Paolo Nasta. [Department of Agricultural Sciences, Division of Agricultural, Forest and Biosystems Engineering,University of Naples Federico II, Italy]
+Meteorological measurements in the study areas including temperature, precipitation and evapotranspiration were also provided by Paolo Nasta [Department of Agricultural Sciences, Division of Agricultural, Forest and Biosystems Engineering, University of Naples Federico II, Italy].
 
 ## Brief overview of study sites:
 
