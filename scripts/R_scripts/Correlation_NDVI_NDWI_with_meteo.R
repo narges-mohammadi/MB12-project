@@ -58,7 +58,7 @@ create_vi_meteo_dfs <- function(write_dir) {
     # define a list of years
     year_list <- list(2017, 2018, 2019, 2020)
 
-    # created in "9_Cropped_Ndvi_from_Gtiff_Function.R" script
+    # created in "Cropped_Ndvi_from_Gtiff_Function.R" script
     read_dir_ndvi <- here("data", "Augmented_data", "Playground_dir_8", "NDVI", "output") 
 
     list_ndvi_df <- pbapply::pblapply(1:length(site_list), function(x) pbapply::pblapply(1:length(year_list), 
