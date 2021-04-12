@@ -13,7 +13,7 @@ The topographic attributes(TAs) were calculated using **DEM**[[1]](#1) in SAGA. 
 | Plan Curvature                  | Plan Curvature is the horizontal curvature, intersecting with the XY plane.        | 
 | AAC                             | ---        |
 
-Meteorological measurements were also provided by Paolo Nasta.
+Meteorological measurements including temperature, precipitation and evapotranspiration were also provided by Paolo Nasta.
 
 ## Brief overview of study sites:
 
