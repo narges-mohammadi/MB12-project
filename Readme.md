@@ -9,15 +9,15 @@ The topographic attributes(TAs) were calculated using **DEM**[[1]](#1) in SAGA. 
 | DEM                             | Digital Elevation Model        |
 | Terrain Ruggedness Index (TRI)  | ---        |
 | Topographic Wetness Index (TWI) | An indicator for the potential water content and horizon depth of the soil |
-| Profile Curvature               | controls water flow acceleration and deceleration  and the erosion potential of an area       |
-| Plan Curvature                  | A measure of flow convergence (kh < 0) and divergence (kh > 0) and determines soil water or the deposition of particles.        | 
+| Profile Curvature               | Profile curvature is the curvature intersecting with the plane defined by the Z-axis and maximum gradient direction.       |
+| Plan Curvature                  | Plan Curvature is the horizontal curvature, intersecting with the XY plane.        | 
 | AAC                             | ---        |
 
 Meteorological measurements were also provided by Paolo Nasta.
 
 ## Brief overview of study sites:
 
-The Alento River Catchment (ARC) is situated in the Southern Apennines (Province of Salerno, Campania, Italy). The earth dam known as Piano della Rocca separates the Upper ARC (UARC) from the Lower ARC (LARC).
+The Alento River Catchment (ARC) is situated in the Southern Apennines (Province of Salerno, Campania, Italy). The earth dam known as Piano della Rocca separates the Upper ARC (UARC) from the Lower ARC (LARC).
 
 The two experimental sites (MFC2 and GOR1) are located in the UARC:
 
