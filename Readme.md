@@ -18,9 +18,10 @@ Meteorological measurements were also provided by Paolo Nasta.
 ## Brief overview of study sites:
 
 The Alento River Catchment (ARC) is situated in the Southern Apennines (Province of Salerno, Campania, Italy). The earth dam known as Piano della Rocca separates the Upper ARC (UARC) from the Lower ARC (LARC).
+
 The two experimental sites (MFC2 and GOR1) are located in the UARC:
 
-* MFC2 representative of the cropland zone of UARC with a co-existence of relatively sparse horticultural crops, olive, walnut, and cherry trees, 
+* MFC2 is representative of the cropland zone of UARC with a co-existence of relatively sparse horticultural crops, olive, walnut, and cherry trees, 
     located near the village of Monteforte Cilento, on the south-facing hillslope of UARC.  
 
 * GOR1 is representative of the woodland zone of UARC on the north-facing hillslope of UARC, located near the village of Gorga.
