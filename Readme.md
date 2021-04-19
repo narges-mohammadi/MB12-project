@@ -1,17 +1,18 @@
 ﻿The use of mini scripts is shown in the "Final_Script" starting from data downloading to visualization.
 
-The topographic attributes (TAs) were calculated using **DEM** [[1]](#1) in SAGA. Here is the list of used attributes [[2]](#2):
+The topographic attributes (TAs) were calculated using **DEM** [[1]](#1) in SAGA. Here is the list of used attributes:
 
 | TA                              | Description |
 | -----------                     | ----------- |
-| Slope                           | Slope is the angle between the tangent plane and the horizontal plane at a given point of the topographical surface. |
-| Aspect                          | Aspect is a clockwise angle from north to a projection of the external normal to the horizontal plane at a given point of the Earth's surface        |
-| DEM                             | Digital Elevation Model        |
-| Terrain Ruggedness Index (TRI)  | Terrain ruggedness (roughness) is defined as the variability or irregularity in elevation (highs and lows) within a sampled terrain unit.      |
-| Topographic Wetness Index (TWI) | An indicator for the potential water content and horizon depth of the soil |
-| Profile Curvature               | Profile curvature is the curvature intersecting with the plane defined by the Z-axis and maximum gradient direction.       |
-| Plan Curvature                  | Plan Curvature is the horizontal curvature, intersecting with the XY plane.        | 
-| AAC                             | ---        |
+| Slope                           | Slope is the angle between the tangent plane and the horizontal plane at a given point of the topographical surface. [[2]](#2) |
+| Aspect                          | Aspect is a clockwise angle from north to a projection of the external normal to the horizontal plane at a given point of the Earth's surface. [[2]](#2) |
+| DEM                             | Digital Elevation Model. Elevation as primary descriptor of physical landscape features. [[3]](#3)   |
+| Terrain Ruggedness Index (TRI)  | Terrain ruggedness (roughness) is defined as the variability or irregularity in elevation (highs and lows) within a sampled terrain unit. [[2]](#2)|
+| Topographic Wetness Index (TWI) | An indicator for the potential water content and horizon depth of the soil. [[2]](#2) |
+| Profile Curvature               | Profile curvature is the curvature intersecting with the plane defined by the Z-axis and maximum gradient direction. [[2]](#2)      |
+| Plan Curvature                  | Plan Curvature is the horizontal curvature, intersecting with the XY plane. [[2]](#2)      | 
+| AAC                             | Altitude Above Channel network: Vertical spacing between initial elevation and interpolated channel network base level elevation. [[3]](#3) |
+| FlowAcc                         | Flow Accumulation: representative of effects of depth and velocity of flow. [[3]](#3) |
 
 Meteorological measurements in the study areas including temperature, precipitation and evapotranspiration were also provided by Paolo Nasta [Department of Agricultural Sciences, Division of Agricultural, Forest and Biosystems Engineering, University of Naples Federico II, Italy].
 
@@ -46,3 +47,6 @@ Science of the Total Environment.
 Calogero Schillaci, Andreas Braun and Jan Kropáček (2015).  
 Terrain analysis and landform recognition. 
 British Society for Geomorphology, Geomorphological Techniques, Chap. 2, Sec. 4.2.
+
+<a id="3">[3]</a>
+Schönbrodt-Stitt et al., under review
